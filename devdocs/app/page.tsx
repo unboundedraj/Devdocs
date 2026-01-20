@@ -33,7 +33,7 @@ export default async function HomePage() {
         propositions={homepage.value_propositions}
       />
 
-      <FeaturedApplications />
+<FeaturedApplications applications={homepage.featured_applications} />
 
       <ContributionCTA
         heading={homepage.contribution_cta?.cta_heading}

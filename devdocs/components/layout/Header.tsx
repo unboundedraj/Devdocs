@@ -27,6 +27,18 @@ export default function Header() {
               Applications
             </Link>
             <Link 
+              href="/faqs" 
+              className="text-gray-700 hover:text-indigo-600 font-medium transition-colors"
+            >
+              FAQs
+            </Link>
+            <Link 
+              href="/chat" 
+              className="text-gray-700 hover:text-indigo-600 font-medium transition-colors"
+            >
+              Chat
+            </Link>
+            <Link 
               href="/support" 
               className="text-gray-700 hover:text-indigo-600 font-medium transition-colors"
             >

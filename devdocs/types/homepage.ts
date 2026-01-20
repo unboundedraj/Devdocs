@@ -1,3 +1,4 @@
+import { Application } from '@/types/application';
 export interface ValueProposition {
   proposition_title: string;
   proposition_description: string;
@@ -19,7 +20,7 @@ export interface Homepage {
   title: string;
   hero_description: string;
   value_propositions: ValueProposition[];
-  featured_applications: any[]; // We'll type this properly later when we work on applications
+featured_applications: Application[];
   contribution_cta: ContributionCTA;
   metadata: Metadata;
 }

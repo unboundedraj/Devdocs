@@ -26,6 +26,7 @@ export async function getHomepageByQuery(): Promise<Homepage | null> {
   try {
     const response = await Stack.ContentType('homepage')
       .Query()
+      .includeReference(['featured_applications']) // ⭐ THIS LINE
       .toJSON()
       .findOne();
 
@@ -35,6 +36,7 @@ export async function getHomepageByQuery(): Promise<Homepage | null> {
     return null;
   }
 }
+
 
 export async function getAllApplications(): Promise<Application[]> {
   try {
@@ -96,9 +98,7 @@ export async function getChangelogsByApplicationUid(applicationUid: string): Pro
       .toJSON()
       .find();
 
-    // Filter changelogs that reference this application
-    // Since we don't know the exact reference structure, we'll get all for now
-    // and filter based on the application_reference field
+
     const allChangelogs = response[0] || [];
     
     // Filter changelogs for this specific application

@@ -1,3 +1,5 @@
+"use client";
+
 import { SupportChannel } from '@/types/supportpage';
 
 interface SupportChannelCardProps {
