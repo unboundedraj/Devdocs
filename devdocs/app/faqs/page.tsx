@@ -1,83 +1,71 @@
-import FAQList from '@/components/faq/FAQList';
-import { FAQ } from '@/types/faq';
+import { getFAQs } from '@/lib/queries'
+import { FAQ } from '@/types/faq'
+import FAQClient from '@/components/faq/FAQClient'
 
-// Sample FAQs - You can replace this with data from your CMS
-const sampleFAQs: FAQ[] = [
-  {
-    id: '1',
-    question: 'What is DevDocs?',
-    answer: 'DevDocs is a centralized hub for developer documentation. It makes it easier to discover, learn, and contribute documentation for various applications and tools.',
-    category: 'General'
-  },
-  {
-    id: '2',
-    question: 'How do I contribute documentation?',
-    answer: 'You can contribute documentation by visiting our Support page and following the contribution guidelines. We welcome contributions from the community!',
-    category: 'General'
-  },
-  {
-    id: '3',
-    question: 'How can I find specific application documentation?',
-    answer: 'Visit the Applications page to browse all available documentation. You can search or browse through categories to find what you\'re looking for.',
-    category: 'Applications'
-  },
-  {
-    id: '4',
-    question: 'Is DevDocs free to use?',
-    answer: 'Yes! DevDocs is completely free to use. All documentation is publicly available and accessible to everyone.',
-    category: 'General'
-  },
-  {
-    id: '5',
-    question: 'How often is documentation updated?',
-    answer: 'Documentation is updated regularly by our community contributors. Major updates are announced in the changelog section of each application.',
-    category: 'Documentation'
-  },
-  {
-    id: '6',
-    question: 'Can I report issues with documentation?',
-    answer: 'Yes! If you find any issues or inaccuracies, please report them through our Support page. We appreciate your feedback!',
-    category: 'Support'
-  }
-];
+export default async function FAQsPage() {
+  const faqs: FAQ[] = await getFAQs()
 
-export default function FAQsPage() {
+  const categories = Array.from(
+    new Set(
+      faqs
+        .map((faq) => faq.category)
+        .filter((category): category is string => Boolean(category))
+    )
+  )
+
   return (
-    <main className="min-h-screen bg-gray-50">
-      {/* Page Header */}
-      <section className="bg-white border-b border-gray-200 py-16 px-6">
-        <div className="max-w-5xl mx-auto text-center">
-          <h1 className="text-5xl font-bold text-gray-900 mb-6">
-            Frequently Asked Questions
+    <main className="min-h-screen bg-gradient-to-b from-slate-50 to-pink-50">
+      {/* Header Section */}
+      <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 text-white py-20 px-4">
+        <div className="mx-auto max-w-4xl">
+          <div className="inline-block mb-4 px-3 py-1 bg-white/20 rounded-full text-sm font-medium backdrop-blur-sm">
+            ✨ Help & Support
+          </div>
+          <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+            Frequently Asked<br />Questions
           </h1>
-          <p className="text-xl text-gray-600 leading-relaxed max-w-3xl mx-auto">
-            Find answers to common questions about DevDocs, contributing, and using our platform.
+          <p className="text-lg text-indigo-100 max-w-2xl">
+            Find answers to common questions about Devdocs, content management,
+            and how documentation is structured. Can't find what you're looking for?
           </p>
+          <div className="mt-6">
+            <a
+              href="/support"
+              className="inline-block text-indigo-600 bg-white px-6 py-2 rounded-lg font-semibold hover:bg-indigo-50 transition-colors"
+            >
+              Contact Support →
+            </a>
+          </div>
         </div>
-      </section>
+      </div>
 
-      {/* FAQs Content */}
-      <section className="py-16 px-6">
-        <div className="max-w-4xl mx-auto">
-          <FAQList faqs={sampleFAQs} />
+      {/* Content Section */}
+      <div className="mx-auto max-w-4xl px-4 py-16">
+        <div className="rounded-2xl bg-white border border-gray-100 shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+          <div className="p-8 sm:p-12 bg-gradient-to-br from-gray-50 via-white to-gray-50">
+            <FAQClient faqs={faqs} categories={categories} />
+          </div>
         </div>
-      </section>
 
-      {/* CTA Section */}
-      <section className="bg-indigo-600 text-white py-16 px-6">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-4">Still have questions?</h2>
-          <p className="text-indigo-100 mb-8 text-lg">
-            Can't find the answer you're looking for? Our support team is here to help.
-          </p>
-          <a
-            href="/support"
-            className="inline-block bg-white text-indigo-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
-          >
-            Contact Support
-          </a>
+        {/* Footer CTA */}
+        <div className="mt-16 text-center">
+          <p className="text-gray-600 mb-4">Still have questions?</p>
+          <div className="flex gap-4 justify-center flex-wrap">
+            <a
+              href="/chat"
+              className="px-6 py-3 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 transition-colors"
+            >
+              💬 Chat with AI
+            </a>
+            <a
+              href="/support"
+              className="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg font-semibold hover:bg-gray-200 transition-colors"
+            >
+              Get Support
+            </a>
+          </div>
         </div>
-      </section>
+      </div>
     </main>
-  );
+  )
 }

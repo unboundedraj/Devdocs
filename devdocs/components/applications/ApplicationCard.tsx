@@ -1,0 +1,76 @@
+import Link from 'next/link';
+import { Application } from '@/types/application';
+
+interface ApplicationCardProps {
+  application: Application;
+}
+
+export default function ApplicationCard({ application }: ApplicationCardProps) {
+  return (
+    <Link 
+      href={`/applications/${application.uid}`}
+      className="group block bg-white rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 border-2 border-gray-100 hover:border-indigo-300 overflow-hidden h-full flex flex-col"
+    >
+      {/* Card Header with Category Badge */}
+      <div className="bg-gradient-to-r from-indigo-50 to-purple-50 px-6 py-4 border-b border-gray-100">
+        <div className="flex items-center justify-between mb-2">
+          {application.app_category && (
+            <span className="inline-block bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-xs font-semibold">
+              {application.app_category}
+            </span>
+          )}
+          {application.application_status === 'Active' && (
+            <span className="inline-block bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold">
+              ✓ Active
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* Card Body */}
+      <div className="p-6 flex-1 flex flex-col">
+        {/* Title */}
+        <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-indigo-600 transition-colors">
+          {application.title}
+        </h3>
+
+        {/* Description */}
+        <p className="text-gray-600 text-sm leading-relaxed mb-4 flex-1 line-clamp-3">
+          {application.app_description || application.main_description?.replace(/<[^>]*>/g, '').substring(0, 150) || 'View comprehensive documentation and guides for ' + application.title}
+        </p>
+
+        {/* Tags */}
+        {application.tags && application.tags.length > 0 && (
+          <div className="flex flex-wrap gap-2 mb-4">
+            {application.tags.slice(0, 3).map((tag: string, index: number) => (
+              <span 
+                key={index}
+                className="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs"
+              >
+                #{tag}
+              </span>
+            ))}
+            {application.tags.length > 3 && (
+              <span className="text-gray-400 text-xs self-center">
+                +{application.tags.length - 3} more
+              </span>
+            )}
+          </div>
+        )}
+
+        {/* Footer */}
+        <div className="pt-4 border-t border-gray-100 flex items-center justify-between">
+          <span className="text-sm text-gray-500">
+            {application.maintainer_name || 'Community'}
+          </span>
+          <div className="flex items-center text-indigo-600 font-semibold text-sm group-hover:translate-x-1 transition-transform">
+            View Docs
+            <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </Link>
+  );
+}

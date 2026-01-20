@@ -1,6 +1,12 @@
 export interface FAQ {
-  id: string;
-  question: string;
-  answer: string;
-  category?: string;
+  uid: string
+  title: string
+  question: string
+  answer: {
+    html: string
+    json?: any
+  }
+  category?: string
+  order?: number
+  is_active?: boolean
 }

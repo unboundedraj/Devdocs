@@ -13,15 +13,18 @@ export default async function SupportPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
       {/* Page Header */}
-      <section className="bg-white border-b border-gray-200 py-16 px-6">
+      <section className="bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 text-white py-32 px-6">
         <div className="max-w-5xl mx-auto text-center">
-          <h1 className="text-5xl font-bold text-gray-900 mb-6">
+          <div className="inline-block mb-4 px-3 py-1 bg-white/20 rounded-lg text-sm font-medium backdrop-blur-sm">
+            🙋 We're Here to Help
+          </div>
+          <h1 className="text-6xl md:text-7xl font-bold mb-8 leading-tight">
             {supportPage.title}
           </h1>
           {supportPage.multi_line_textbox && (
-            <p className="text-xl text-gray-600 leading-relaxed max-w-3xl mx-auto">
+            <p className="text-xl text-indigo-100 leading-relaxed max-w-3xl mx-auto">
               {supportPage.multi_line_textbox}
             </p>
           )}
@@ -30,14 +33,16 @@ export default async function SupportPage() {
 
       {/* Support Channels */}
       {supportPage.support_channels && supportPage.support_channels.length > 0 && (
-        <section className="py-16 px-6">
+        <section className="py-20 px-6">
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4 text-center">
-              How Can We Help?
-            </h2>
-            <p className="text-gray-600 text-center mb-12">
-              Choose the platform that works best for you
-            </p>
+            <div className="text-center mb-20">
+              <h2 className="text-4xl font-bold text-gray-900 mb-6">
+                Multiple Ways to Connect
+              </h2>
+              <p className="text-lg text-gray-600">
+                Choose your preferred platform to get instant support
+              </p>
+            </div>
             <SupportChannels channels={supportPage.support_channels} />
           </div>
         </section>
@@ -45,13 +50,17 @@ export default async function SupportPage() {
 
 {/* Contribution Guidelines */}
 {supportPage.contribution_guidelines && (
-  <section className="py-16 px-6 bg-white">
+  <section className="py-20 px-6 bg-white border-t border-gray-100">
     <div className="max-w-4xl mx-auto">
-      <h2 className="text-3xl font-bold text-gray-900 mb-8">
-        Contribution Guidelines
-      </h2>
-      <div 
-        className="rich-text text-gray-700"
+      <div className="mb-12">
+        <div className="inline-block px-3 py-1 bg-purple-100 text-purple-700 rounded-lg text-sm font-medium mb-4">
+          💡 Contributing
+        </div>
+        <h2 className="text-4xl font-bold text-gray-900">
+          Contribution Guidelines
+        </h2>
+      </div>
+      <div className="rich-text text-gray-700"
         dangerouslySetInnerHTML={{ __html: supportPage.contribution_guidelines }}
       />
     </div>
@@ -59,26 +68,32 @@ export default async function SupportPage() {
 )}
 
       {/* Additional Help Section */}
-      <section className="py-16 px-6 bg-gradient-to-br from-indigo-50 to-blue-50">
+      <section className="py-20 px-6 bg-gradient-to-br from-indigo-600 via-purple-600 to-indigo-600 text-white">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
             Still Need Help?
           </h2>
-          <p className="text-lg text-gray-600 mb-8">
+          <p className="text-lg text-indigo-100 mb-10 max-w-2xl mx-auto leading-relaxed">
             Can't find what you're looking for? Our community is here to help you get the most out of DevDocs.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <a
               href="/applications"
-              className="bg-indigo-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors"
+              className="bg-white text-indigo-600 px-8 py-3 rounded-lg font-semibold hover:bg-indigo-50 transition-all duration-200 hover:shadow-lg"
             >
               Browse Documentation
             </a>
             <a
-              href="mailto:support@devdocs.com"
-              className="bg-white text-indigo-600 border-2 border-indigo-600 px-8 py-3 rounded-lg font-semibold hover:bg-indigo-50 transition-colors"
+              href="/chat"
+              className="bg-indigo-500 text-white px-8 py-3 rounded-lg font-semibold hover:bg-indigo-400 transition-all duration-200 border-2 border-white/30 hover:border-white"
             >
-              Contact Us
+              💬 Try AI Chat
+            </a>
+            <a
+              href="mailto:support@devdocs.com"
+              className="bg-transparent text-white px-8 py-3 rounded-lg font-semibold border-2 border-white hover:bg-white/10 transition-all duration-200"
+            >
+              Email Us
             </a>
           </div>
         </div>

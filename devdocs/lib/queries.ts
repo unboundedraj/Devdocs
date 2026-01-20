@@ -121,3 +121,20 @@ export async function getChangelogsByApplicationUid(applicationUid: string): Pro
     return [];
   }
 }
+
+export const getFAQs = async () => {
+  try {
+    const Query = Stack.ContentType('faq')
+      .Query()
+      .where('is_active', true)
+      .ascending('order')
+      .toJSON()
+
+    const result = await Query.find()
+
+    return result?.[0] || []
+  } catch (error) {
+    console.error('Error fetching FAQs:', error)
+    return []
+  }
+}
