@@ -1,0 +1,146 @@
+@import "tailwindcss";
+
+/* Blob animation for hero */
+@keyframes blob {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+}
+
+.animate-blob {
+  animation: blob 7s infinite;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+/* Rich Text Editor Styles */
+.rich-text h1 {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  color: #111827;
+  line-height: 1.2;
+}
+
+.rich-text h2 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  color: #111827;
+  line-height: 1.3;
+}
+
+.rich-text h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+  color: #111827;
+  line-height: 1.4;
+}
+
+.rich-text p {
+  margin-bottom: 1rem;
+  line-height: 1.75;
+  color: #374151;
+}
+
+.rich-text ul,
+.rich-text ol {
+  margin-bottom: 1rem;
+  padding-left: 2rem;
+  line-height: 1.75;
+}
+
+.rich-text ul {
+  list-style-type: disc;
+}
+
+.rich-text ol {
+  list-style-type: decimal;
+}
+
+.rich-text li {
+  margin-bottom: 0.5rem;
+  color: #374151;
+}
+
+.rich-text ul li {
+  list-style-type: disc;
+}
+
+.rich-text ol li {
+  list-style-type: decimal;
+}
+
+.rich-text strong {
+  font-weight: 600;
+  color: #111827;
+}
+
+.rich-text em {
+  font-style: italic;
+}
+
+.rich-text a {
+  color: #4f46e5;
+  text-decoration: underline;
+}
+
+.rich-text a:hover {
+  color: #4338ca;
+}
+
+.rich-text code {
+  background-color: #f3f4f6;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  font-family: monospace;
+  color: #1f2937;
+}
+
+.rich-text pre {
+  background-color: #f3f4f6;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  margin-bottom: 1rem;
+}
+
+.rich-text blockquote {
+  border-left: 4px solid #e5e7eb;
+  padding-left: 1rem;
+  margin: 1rem 0;
+  font-style: italic;
+  color: #6b7280;
+}
+
+.rich-text hr {
+  margin: 2rem 0;
+  border: 0;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* Remove extra spacing from empty paragraphs */
+.rich-text p:empty,
+.rich-text p:has(> br:only-child) {
+  display: none;
+}

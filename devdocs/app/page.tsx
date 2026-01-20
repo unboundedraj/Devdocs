@@ -1,0 +1,45 @@
+import { getHomepageByQuery } from '@/lib/queries';
+import HeroSection from '@/components/homepage/HeroSection';
+import ValuePropositions from '@/components/homepage/ValuePropositions';
+import FeaturedApplications from '@/components/homepage/FeaturedApplications';
+import ContributionCTA from '@/components/homepage/ContributionCTA';
+
+export default async function HomePage() {
+  const homepage = await getHomepageByQuery();
+
+  if (!homepage) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 to-blue-50">
+        <div className="text-center">
+          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <p className="text-red-600 font-semibold">Failed to load homepage content</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <main className="min-h-screen">
+      <HeroSection 
+        title={homepage.title}
+        description={homepage.hero_description}
+      />
+
+      <ValuePropositions 
+        propositions={homepage.value_propositions}
+      />
+
+      <FeaturedApplications />
+
+      <ContributionCTA
+        heading={homepage.contribution_cta?.cta_heading}
+        description={homepage.contribution_cta?.cta_description}
+        url={homepage.contribution_cta?.cta_url}
+      />
+    </main>
+  );
+}
