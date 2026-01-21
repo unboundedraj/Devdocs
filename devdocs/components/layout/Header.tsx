@@ -47,14 +47,12 @@ export default function Header() {
           </div>
 
           {/* CTA Button */}
-          <div className="hidden md:block">
-            <Link 
-              href="/support"
-              className="bg-indigo-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-indigo-700 transition-colors"
-            >
-              Contribute
-            </Link>
-          </div>
+          <Link 
+  href="/contribute"  // Changed from /support
+  className="bg-indigo-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-indigo-700 transition-colors"
+>
+  Contribute
+</Link>
 
           {/* Mobile Menu Button */}
           <button 

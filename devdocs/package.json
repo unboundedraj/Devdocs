@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@contentstack/management": "^1.27.2",
     "contentstack": "^3.26.3",
     "lucide-react": "^0.562.0",
     "next": "16.1.3",
