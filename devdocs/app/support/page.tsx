@@ -13,7 +13,7 @@ export default async function SupportPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+    <main className="min-h-screen bg-theme-background">
       {/* Page Header */}
       <section className="bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 text-white py-32 px-6">
         <div className="max-w-5xl mx-auto text-center">
@@ -48,24 +48,24 @@ export default async function SupportPage() {
         </section>
       )}
 
-{/* Contribution Guidelines */}
-{supportPage.contribution_guidelines && (
-  <section className="py-20 px-6 bg-white border-t border-gray-100">
-    <div className="max-w-4xl mx-auto">
-      <div className="mb-12">
-        <div className="inline-block px-3 py-1 bg-purple-100 text-purple-700 rounded-lg text-sm font-medium mb-4">
-          💡 Contributing
-        </div>
-        <h2 className="text-4xl font-bold text-gray-900">
-          Contribution Guidelines
-        </h2>
-      </div>
-      <div className="rich-text text-gray-700"
-        dangerouslySetInnerHTML={{ __html: supportPage.contribution_guidelines }}
-      />
-    </div>
-  </section>
-)}
+      {/* Contribution Guidelines */}
+      {supportPage.contribution_guidelines && (
+        <section className="py-20 px-6 bg-white border-t border-gray-100">
+          <div className="max-w-4xl mx-auto">
+            <div className="mb-12">
+              <div className="inline-block px-3 py-1 bg-purple-100 text-purple-700 rounded-lg text-sm font-medium mb-4">
+                💡 Contributing
+              </div>
+              <h2 className="text-4xl font-bold text-gray-900">
+                Contribution Guidelines
+              </h2>
+            </div>
+            <div className="rich-text text-gray-700"
+              dangerouslySetInnerHTML={{ __html: supportPage.contribution_guidelines }}
+            />
+          </div>
+        </section>
+      )}
 
       {/* Additional Help Section */}
       <section className="py-20 px-6 bg-gradient-to-br from-indigo-600 via-purple-600 to-indigo-600 text-white">

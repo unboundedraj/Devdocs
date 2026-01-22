@@ -4,7 +4,6 @@ import FAQClient from '@/components/faq/FAQClient'
 
 export default async function FAQsPage() {
   const faqs: FAQ[] = await getFAQs()
-
   const categories = Array.from(
     new Set(
       faqs
@@ -14,7 +13,7 @@ export default async function FAQsPage() {
   )
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-slate-50 to-pink-50">
+    <main className="min-h-screen bg-theme-background">
       {/* Header Section */}
       <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 text-white py-20 px-4">
         <div className="mx-auto max-w-4xl">

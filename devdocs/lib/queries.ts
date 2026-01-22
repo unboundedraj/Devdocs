@@ -3,9 +3,22 @@ import { Homepage } from '@/types/homepage';
 import { Application } from '@/types/application';
 import { Supportpage } from '@/types/supportpage';
 import { Changelog } from '@/types/changelog';
+import { ThemeSettings } from '@/types/theme';
 
 
-
+export async function getThemeSettings(): Promise<ThemeSettings | null> {
+  try {
+    const response = await Stack.ContentType('theme_settings')
+      .Query()
+      .toJSON()
+      .findOne();
+    
+    return response as ThemeSettings;
+  } catch (error) {
+    console.error('Error fetching theme settings:', error);
+    return null;
+  }
+}
 
 export async function getHomepage(): Promise<Homepage | null> {
   try {

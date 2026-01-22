@@ -50,7 +50,6 @@ export default function ApplicationsContent({ applications }: ApplicationsConten
           return new Date(b.updated_at || b.created_at || '').getTime() - 
                  new Date(a.updated_at || a.created_at || '').getTime();
         case 'popular':
-          // You can implement popularity based on views, stars, etc.
           return a.title.localeCompare(b.title);
         default:
           return 0;
@@ -211,7 +210,7 @@ export default function ApplicationsContent({ applications }: ApplicationsConten
       </section>
 
       {/* Applications Grid */}
-      <section className="py-12 px-6">
+      <section className="py-12 px-6 bg-theme-background">
         <div className="max-w-7xl mx-auto">
           {/* Active Filters */}
           {(searchQuery || selectedCategory !== 'all') && (

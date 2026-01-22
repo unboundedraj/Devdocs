@@ -12,7 +12,7 @@ export interface Application {
   url: string;
   _version?: number;
   locale?: string;
-  
+
   // Main content
   main_description?: string;
   app_description?: string;
@@ -44,4 +44,6 @@ export interface Application {
     environment: string;
     locale: string;
   };
+
+
 }

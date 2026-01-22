@@ -70,6 +70,7 @@ export default function ApplicationCard({ application }: ApplicationCardProps) {
             </svg>
           </div>
         </div>
+        
       </div>
     </Link>
   );

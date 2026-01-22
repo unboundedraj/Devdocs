@@ -83,6 +83,8 @@ export default async function ApplicationDetailPage({
               ))}
             </div>
           )}
+          
+
 
           {/* Quick Actions */}
           <div className="flex gap-4">
@@ -103,7 +105,7 @@ export default async function ApplicationDetailPage({
               href={`/applications/${slug}/changelog`}
               className="bg-white border-2 border-indigo-600 text-indigo-600 px-6 py-2 rounded-lg font-semibold hover:bg-indigo-50 transition-colors"
             >
-              View Changelog
+              View Changelogs
             </Link>
           </div>
         </div>
@@ -171,6 +173,8 @@ export default async function ApplicationDetailPage({
           </div>
         </section>
       )}
+
+      
     </main>
   );
 }
