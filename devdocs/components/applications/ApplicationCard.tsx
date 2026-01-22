@@ -1,11 +1,71 @@
+import { useState } from 'react';
 import Link from 'next/link';
 import { Application } from '@/types/application';
+import { signIn, useSession } from 'next-auth/react';
 
 interface ApplicationCardProps {
   application: Application;
+  isUpvoted?: boolean;
+  onUpvoteSuccess?: () => void;
 }
+export default function ApplicationCard({ application, isUpvoted: initialIsUpvoted = false, onUpvoteSuccess }: ApplicationCardProps) {
+  const { data: session, status } = useSession();
+  const [upvotes, setUpvotes] = useState(application.upvotes || 0);
+  const [isUpvoting, setIsUpvoting] = useState(false);
+  const [hasUpvoted, setHasUpvoted] = useState(initialIsUpvoted);
 
-export default function ApplicationCard({ application }: ApplicationCardProps) {
+  const handleUpvote = async (e: React.MouseEvent) => {
+    e.preventDefault(); // ⛔ stop Link navigation
+    e.stopPropagation();
+
+    if (status === 'loading') return;
+
+    // Enforce "logged-in users only" at the UI layer
+    if (!session?.user) {
+      await signIn('google');
+      return;
+    }
+
+    // Prevent repeat clicks in the UI (API is still the source of truth)
+    if (isUpvoting || hasUpvoted) return;
+
+    setIsUpvoting(true);
+    try {
+      const res = await fetch('/api/upvote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ applicationUid: application.uid }),
+      });
+
+      // Session expired or not present on server
+      if (res.status === 401) {
+        await signIn('google');
+        return;
+      }
+
+      const data = await res.json().catch(() => null);
+
+      if (!res.ok) {
+        console.error('Upvote failed:', data);
+        return;
+      }
+
+      // Server returns canonical count (even if already upvoted)
+      if (typeof data?.upvotes === 'number') {
+        setUpvotes(data.upvotes);
+      }
+
+      if (data?.success && !data?.alreadyUpvoted) {
+        setHasUpvoted(true);
+        // Notify parent to update upvoted list
+        onUpvoteSuccess?.();
+      } else if (data?.alreadyUpvoted) {
+        setHasUpvoted(true);
+      }
+    } finally {
+      setIsUpvoting(false);
+    }
+  };
   return (
     <Link 
       href={`/applications/${application.uid}`}
@@ -60,16 +120,41 @@ export default function ApplicationCard({ application }: ApplicationCardProps) {
 
         {/* Footer */}
         <div className="pt-4 border-t border-gray-100 flex items-center justify-between">
-          <span className="text-sm text-gray-500">
-            {application.maintainer_name || 'Community'}
-          </span>
-          <div className="flex items-center text-indigo-600 font-semibold text-sm group-hover:translate-x-1 transition-transform">
-            View Docs
-            <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </div>
-        </div>
+  <span className="text-sm text-gray-500">
+    {application.maintainer_name || 'Community'}
+  </span>
+
+  <div className="flex items-center gap-4">
+    {/* Upvote */}
+    <button
+      onClick={handleUpvote}
+      disabled={status === 'loading' || isUpvoting || hasUpvoted}
+      className={`flex items-center gap-1.5 px-2 py-1 rounded-lg text-sm font-medium transition-all ${
+        hasUpvoted
+          ? 'bg-indigo-50 text-indigo-600 cursor-default'
+          : 'text-gray-600 hover:text-indigo-600 hover:bg-gray-50'
+      } ${isUpvoting ? 'opacity-50 cursor-wait' : ''}`}
+      title={hasUpvoted ? 'You already upvoted this' : 'Upvote this application'}
+    >
+      <span className={`text-lg ${hasUpvoted ? 'filter drop-shadow-sm' : ''}`}>
+        {hasUpvoted ? '👍' : '⬆️'}
+      </span>
+      <span className={hasUpvoted ? 'font-semibold' : ''}>{upvotes}</span>
+      {hasUpvoted && (
+        <span className="ml-0.5 text-xs text-indigo-500 font-bold">✓</span>
+      )}
+    </button>
+
+    {/* View Docs (unchanged) */}
+    <div className="flex items-center text-indigo-600 font-semibold text-sm group-hover:translate-x-1 transition-transform">
+      View Docs
+      <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7" />
+      </svg>
+    </div>
+  </div>
+</div>
+
         
       </div>
     </Link>

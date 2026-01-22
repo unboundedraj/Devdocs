@@ -1,18 +1,43 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Application } from '@/types/application';
 import ApplicationCard from './ApplicationCard';
+import { useSession } from 'next-auth/react';
 
 interface ApplicationsContentProps {
   applications: Application[];
 }
 
 export default function ApplicationsContent({ applications }: ApplicationsContentProps) {
+  const { data: session } = useSession();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [sortBy, setSortBy] = useState<'name' | 'recent' | 'popular'>('name');
   const [showFilters, setShowFilters] = useState(false);
+  const [upvotedUids, setUpvotedUids] = useState<Set<string>>(new Set());
+
+  // Fetch user's upvoted applications on mount and when session changes
+  useEffect(() => {
+    if (!session?.user) {
+      setUpvotedUids(new Set());
+      return;
+    }
+
+    const fetchUpvoted = async () => {
+      try {
+        const res = await fetch('/api/user/upvoted');
+        if (res.ok) {
+          const data = await res.json();
+          setUpvotedUids(new Set(data.upvotedApplicationUids || []));
+        }
+      } catch (error) {
+        console.error('Failed to fetch upvoted applications:', error);
+      }
+    };
+
+    fetchUpvoted();
+  }, [session]);
 
   // Get unique categories
   const categories = useMemo(() => {
@@ -249,7 +274,15 @@ export default function ApplicationsContent({ applications }: ApplicationsConten
               </div>
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredAndSortedApps.map((app) => (
-                  <ApplicationCard key={app.uid} application={app} />
+                  <ApplicationCard 
+                    key={app.uid} 
+                    application={app} 
+                    isUpvoted={upvotedUids.has(app.uid)}
+                    onUpvoteSuccess={() => {
+                      // Add to upvoted set immediately for instant UI feedback
+                      setUpvotedUids(prev => new Set([...prev, app.uid]));
+                    }}
+                  />
                 ))}
               </div>
             </>

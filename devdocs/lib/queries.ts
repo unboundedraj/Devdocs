@@ -39,7 +39,8 @@ export async function getHomepageByQuery(): Promise<Homepage | null> {
   try {
     const response = await Stack.ContentType('homepage')
       .Query()
-      .includeReference(['featured_applications']) // ⭐ THIS LINE
+.includeReference(['featured_applications'])
+.includeReferenceContentTypeUID()
       .toJSON()
       .findOne();
 
@@ -58,7 +59,37 @@ export async function getAllApplications(): Promise<Application[]> {
       .toJSON()
       .find();
 
-    return response[0] || [];
+    // Contentstack returns response as [entries, count] or {entries: [], count: number}
+    // Handle both response formats
+    let applications: any[] = [];
+    
+    if (Array.isArray(response)) {
+      // If response is an array, first element is entries array
+      applications = response[0] || [];
+    } else if (response && typeof response === 'object') {
+      // If response is an object, check for entries property
+      applications = response.entries || response[0] || [];
+    }
+
+    // Ensure upvotes field is properly mapped (handle both upvotes and upvotes_count)
+    // Also ensure it's a number, defaulting to 0 if undefined/null
+    const mappedApplications = applications.map((app: any) => {
+      // Check for upvotes in multiple possible field names
+      let upvotesValue: number = 0;
+      
+      if (app.upvotes !== undefined && app.upvotes !== null) {
+        upvotesValue = typeof app.upvotes === 'number' ? app.upvotes : parseInt(String(app.upvotes)) || 0;
+      } else if (app.upvotes_count !== undefined && app.upvotes_count !== null) {
+        upvotesValue = typeof app.upvotes_count === 'number' ? app.upvotes_count : parseInt(String(app.upvotes_count)) || 0;
+      }
+      
+      return {
+        ...app,
+        upvotes: upvotesValue,
+      };
+    });
+
+    return mappedApplications as Application[];
   } catch (error) {
     console.error('Error fetching applications:', error);
     return [];
@@ -68,25 +99,31 @@ export async function getAllApplications(): Promise<Application[]> {
 // Get single application by UID - Using Query
 export async function getApplicationByUid(uid: string): Promise<Application | null> {
   try {
-    console.log('Fetching application with UID:', uid);
-    
     const response = await Stack.ContentType('application')
-      .Query()
+      .Entry(uid)
       .toJSON()
-      .find();
+      .fetch();
 
-    console.log('All applications:', response[0]); // See all apps
+    // Ensure upvotes field is properly mapped
+    let upvotesValue: number = 0;
+    const appResponse = response as any;
     
-    // Find the one matching the UID
-    const application = response[0]?.find((app: any) => app.uid === uid);
+    if (appResponse.upvotes !== undefined && appResponse.upvotes !== null) {
+      upvotesValue = typeof appResponse.upvotes === 'number' ? appResponse.upvotes : parseInt(String(appResponse.upvotes)) || 0;
+    } else if (appResponse.upvotes_count !== undefined && appResponse.upvotes_count !== null) {
+      upvotesValue = typeof appResponse.upvotes_count === 'number' ? appResponse.upvotes_count : parseInt(String(appResponse.upvotes_count)) || 0;
+    }
     
-    console.log('Found application:', application);
-    return application || null;
+    return {
+      ...appResponse,
+      upvotes: upvotesValue,
+    } as Application;
   } catch (error) {
     console.error(`Error fetching application ${uid}:`, error);
     return null;
   }
 }
+
 
 
 export async function getSupportPage(): Promise<Supportpage | null> {

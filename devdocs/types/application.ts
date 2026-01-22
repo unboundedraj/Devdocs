@@ -9,6 +9,7 @@ export interface AppKeyFeature {
 export interface Application {
   uid: string;
   title: string;
+  upvotes?: number;
   url: string;
   _version?: number;
   locale?: string;
