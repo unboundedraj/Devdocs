@@ -104,7 +104,7 @@ export default function ApplicationsContent({ applications }: ApplicationsConten
                 placeholder="Search applications..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full px-6 py-4 rounded-xl text-gray-900 text-lg focus:outline-none focus:ring-4 focus:ring-purple-300 shadow-xl"
+                className="w-full px-6 py-4 rounded-xl text-white text-lg focus:outline-none focus:ring-4 focus:ring-purple-300 shadow-xl"
               />
               <svg 
                 className="absolute right-4 top-1/2 transform -translate-y-1/2 w-6 h-6 text-gray-400"

@@ -3,10 +3,22 @@
 import Link from 'next/link';
 import { useSession, signIn, signOut } from 'next-auth/react';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function Header() {
   const { data: session, status } = useSession();
   const [showDropdown, setShowDropdown] = useState(false);
+  const router = useRouter();
+
+  const handleContributeClick = () => {
+    if (status === 'authenticated') {
+      router.push('/contribute');
+    } else {
+      signIn('google', {
+        callbackUrl: '/contribute',
+      });
+    }
+  };
 
   return (
     <header className="bg-theme-card backdrop-blur-md sticky top-0 z-50 border-b border-theme shadow-xl">
@@ -24,35 +36,20 @@ export default function Header() {
 
           {/* Navigation Links */}
           <div className="hidden md:flex items-center space-x-2">
-            <Link 
-              href="/" 
-              className="text-theme-secondary hover:text-theme-primary px-4 py-2 rounded-lg font-medium transition-all duration-200 hover:bg-theme-background"
-            >
+            <Link href="/" className="text-theme-secondary hover:text-theme-primary px-4 py-2 rounded-lg font-medium transition-all duration-200 hover:bg-theme-background">
               Home
             </Link>
-            <Link 
-              href="/applications" 
-              className="text-theme-secondary hover:text-theme-primary px-4 py-2 rounded-lg font-medium transition-all duration-200 hover:bg-theme-background"
-            >
+            <Link href="/applications" className="text-theme-secondary hover:text-theme-primary px-4 py-2 rounded-lg font-medium transition-all duration-200 hover:bg-theme-background">
               Applications
             </Link>
-            <Link 
-              href="/faqs" 
-              className="text-theme-secondary hover:text-theme-primary px-4 py-2 rounded-lg font-medium transition-all duration-200 hover:bg-theme-background"
-            >
+            <Link href="/faqs" className="text-theme-secondary hover:text-theme-primary px-4 py-2 rounded-lg font-medium transition-all duration-200 hover:bg-theme-background">
               FAQs
             </Link>
-            <Link 
-              href="/support" 
-              className="text-theme-secondary hover:text-theme-primary px-4 py-2 rounded-lg font-medium transition-all duration-200 hover:bg-theme-background"
-            >
+            <Link href="/support" className="text-theme-secondary hover:text-theme-primary px-4 py-2 rounded-lg font-medium transition-all duration-200 hover:bg-theme-background">
               Support
             </Link>
             {session && (
-              <Link 
-                href="/chat" 
-                className="text-theme-secondary hover:text-theme-primary px-4 py-2 rounded-lg font-medium transition-all duration-200 hover:bg-theme-background"
-              >
+              <Link href="/chat" className="text-theme-secondary hover:text-theme-primary px-4 py-2 rounded-lg font-medium transition-all duration-200 hover:bg-theme-background">
                 AI Chat
               </Link>
             )}
@@ -69,8 +66,8 @@ export default function Header() {
                     onClick={() => setShowDropdown(!showDropdown)}
                     className="flex items-center space-x-3 px-4 py-2 rounded-lg bg-theme-background hover:bg-theme-border transition-all duration-200 border border-theme"
                   >
-                    <img 
-                      src={session.user?.image || '/default-avatar.png'} 
+                    <img
+                      src={session.user?.image || '/default-avatar.png'}
                       alt={session.user?.name || 'User'}
                       className="w-8 h-8 rounded-full border-2 border-[var(--color-primary)] shadow-lg"
                     />
@@ -107,12 +104,14 @@ export default function Header() {
                     </div>
                   )}
                 </div>
-                <Link 
-                  href="/contribute"
+
+                {/* Contribute (authenticated) */}
+                <button
+                  onClick={handleContributeClick}
                   className="bg-theme-accent text-white px-6 py-2.5 rounded-full font-semibold hover:opacity-90 transition-all duration-300 shadow-lg transform hover:-translate-y-0.5"
                 >
                   Contribute
-                </Link>
+                </button>
               </div>
             ) : (
               <div className="flex items-center space-x-4">
@@ -128,30 +127,21 @@ export default function Header() {
                   </svg>
                   Sign in with Google
                 </button>
-                <Link 
-                  href="/contribute"
+
+                {/* Contribute (unauthenticated) */}
+                <button
+                  onClick={handleContributeClick}
                   className="bg-theme-accent text-white px-6 py-2.5 rounded-full font-semibold hover:opacity-90 transition-all duration-300 shadow-lg transform hover:-translate-y-0.5"
                 >
                   Contribute
-                </Link>
+                </button>
               </div>
             )}
           </div>
 
           {/* Mobile Menu Button */}
-          <button 
-            className="md:hidden text-theme-secondary hover:text-theme-primary p-2 rounded-lg hover:bg-theme-background transition-colors"
-            aria-label="Menu"
-          >
-            <svg 
-              className="w-6 h-6" 
-              fill="none" 
-              strokeLinecap="round" 
-              strokeLinejoin="round" 
-              strokeWidth="2" 
-              viewBox="0 0 24 24" 
-              stroke="currentColor"
-            >
+          <button className="md:hidden text-theme-secondary hover:text-theme-primary p-2 rounded-lg hover:bg-theme-background transition-colors" aria-label="Menu">
+            <svg className="w-6 h-6" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
               <path d="M4 6h16M4 12h16M4 18h16"></path>
             </svg>
           </button>
