@@ -11,11 +11,11 @@ export default function Footer() {
               <div className="w-10 h-10 bg-theme-primary rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-lg">D</span>
               </div>
-              <h3 className="text-2xl font-bold text-theme-primary">
+              <h3 className="text-2xl font-bold text-theme-secondary">
                 DevDocs
               </h3>
             </div>
-            <p className="text-theme-secondary leading-relaxed">
+            <p className="text-theme-accent leading-relaxed">
               A centralized hub for developer documentation. 
               Making it easier to find and contribute documentation.
             </p>
@@ -23,7 +23,7 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h4 className="text-theme-primary font-semibold mb-6 text-sm uppercase tracking-wider">
+            <h4 className="text-theme-accent font-semibold mb-6 text-sm uppercase tracking-wider">
               Quick Links
             </h4>
             <ul className="space-y-3">
@@ -56,7 +56,7 @@ export default function Footer() {
 
           {/* Community */}
           <div>
-            <h4 className="text-theme-primary font-semibold mb-6 text-sm uppercase tracking-wider">
+            <h4 className="text-theme-accent font-semibold mb-6 text-sm uppercase tracking-wider">
               Community
             </h4>
             <ul className="space-y-3">

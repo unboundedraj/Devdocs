@@ -1,6 +1,7 @@
 import { getFAQs } from '@/lib/queries'
 import { FAQ } from '@/types/faq'
 import FAQClient from '@/components/faq/FAQClient'
+import FAQHeader from '@/components/faq/FAQHeader'
 
 export default async function FAQsPage() {
   const faqs: FAQ[] = await getFAQs()
@@ -14,29 +15,7 @@ export default async function FAQsPage() {
 
   return (
     <main className="min-h-screen bg-theme-background">
-      {/* Header Section */}
-      <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 text-white py-20 px-4">
-        <div className="mx-auto max-w-4xl">
-          <div className="inline-block mb-4 px-3 py-1 bg-white/20 rounded-full text-sm font-medium backdrop-blur-sm">
-            ✨ Help & Support
-          </div>
-          <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
-            Frequently Asked<br />Questions
-          </h1>
-          <p className="text-lg text-indigo-100 max-w-2xl">
-            Find answers to common questions about Devdocs, content management,
-            and how documentation is structured. Can't find what you're looking for?
-          </p>
-          <div className="mt-6">
-            <a
-              href="/support"
-              className="inline-block text-indigo-600 bg-white px-6 py-2 rounded-lg font-semibold hover:bg-indigo-50 transition-colors"
-            >
-              Contact Support →
-            </a>
-          </div>
-        </div>
-      </div>
+      <FAQHeader />
 
       {/* Content Section */}
       <div className="mx-auto max-w-4xl px-4 py-16">

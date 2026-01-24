@@ -1,5 +1,6 @@
 import { getSupportPage } from '@/lib/queries';
 import SupportChannels from '@/app/support/SupportChannels';
+import SupportHeader from '@/components/support/SupportHeader';
 
 export default async function SupportPage() {
   const supportPage = await getSupportPage();
@@ -14,22 +15,7 @@ export default async function SupportPage() {
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
-      {/* Page Header */}
-      <section className="bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 text-white py-32 px-6">
-        <div className="max-w-5xl mx-auto text-center">
-          <div className="inline-block mb-4 px-3 py-1 bg-white/20 rounded-lg text-sm font-medium backdrop-blur-sm">
-            🙋 We're Here to Help
-          </div>
-          <h1 className="text-6xl md:text-7xl font-bold mb-8 leading-tight">
-            {supportPage.title}
-          </h1>
-          {supportPage.multi_line_textbox && (
-            <p className="text-xl text-indigo-100 leading-relaxed max-w-3xl mx-auto">
-              {supportPage.multi_line_textbox}
-            </p>
-          )}
-        </div>
-      </section>
+      <SupportHeader title={supportPage.title} description={supportPage.multi_line_textbox} />
 
       {/* Support Channels */}
       {supportPage.support_channels && supportPage.support_channels.length > 0 && (

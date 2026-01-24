@@ -1,84 +1,90 @@
-import { NextRequest, NextResponse } from 'next/server';
-import contentstack from '@contentstack/management';
+import { NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
 
-export async function POST(request: NextRequest) {
+const API_BASE = 'https://api.contentstack.io/v3';
+
+export async function POST(req: Request) {
+  const session = await getServerSession(authOptions);
+
+  if (!session?.user?.email) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   try {
-    const body = await request.json();
-    
-    // Validate required fields based on your schema
-    const { 
-      title, 
-      url, 
-      app_description, 
-      main_description,
-      application_status,
-      app_category, 
-      app_tags,
-      maintainer_name,
-      app_key_features,
-      getting_started,
-      app_useful_links
-    } = body;
-    
-    if (!title || !url || !app_description || !main_description || !application_status) {
-      return NextResponse.json(
-        { error: 'Title, URL, App Description, Main Description, and Application Status are required' },
-        { status: 400 }
-      );
-    }
+    const body = await req.json();
 
-    // Initialize Management SDK
-    const client = contentstack.client({
-      authtoken: process.env.CONTENTSTACK_MANAGEMENT_TOKEN!
-    });
-
-    const stack = client.stack({
-      api_key: process.env.CONTENTSTACK_API_KEY!
-    });
-
-    // Prepare entry data matching your schema
-    const entryData: any = {
+    const {
       title,
       url,
       app_description,
       main_description,
       application_status,
-    };
+      app_category,
+      app_tags,
+      maintainer_name,
+      getting_started,
+      app_key_features,
+      app_useful_links,
+    } = body;
 
-    // Optional fields
-    if (app_category) entryData.app_category = app_category;
-    if (app_tags && app_tags.length > 0) entryData.app_tags = app_tags;
-    if (maintainer_name) entryData.maintainer_name = maintainer_name;
-    if (getting_started) entryData.getting_started = getting_started;
-    
-    // Handle app_key_features (group field)
-    if (app_key_features && app_key_features.length > 0) {
-      entryData.app_key_features = app_key_features;
+    if (!title || !url || !app_description || !main_description || !application_status) {
+      return NextResponse.json(
+        { error: 'Missing required fields' },
+        { status: 400 }
+      );
     }
 
-    // Handle app_useful_links (group field)
-    if (app_useful_links && app_useful_links.length > 0) {
-      entryData.app_useful_links = app_useful_links;
-    }
+    // ✅ Create DRAFT entry only
+    const createRes = await fetch(
+      `${API_BASE}/content_types/application/entries`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          api_key: process.env.NEXT_PUBLIC_CONTENTSTACK_API_KEY!,
+          authorization: process.env.CONTENTSTACK_MANAGEMENT_TOKEN!,
+        },
+        body: JSON.stringify({
+          entry: {
+            title,
+            url,
+            app_description,
+            main_description,
+            application_status,
+            app_category: app_category || undefined,
+            app_tags: app_tags?.length ? app_tags : undefined,
+            maintainer_name: maintainer_name || undefined,
+            getting_started: getting_started || undefined,
+            app_key_features: app_key_features?.length ? app_key_features : undefined,
+            app_useful_links: app_useful_links?.length ? app_useful_links : undefined,
 
-    // Create entry in Application content type
-    const entry = await stack
-      .contentType('application')
-      .entry()
-      .create({
-        entry: entryData
-      });
+            // optional but very useful for admin review
+            contributed_by: session.user.email,
+            contribution_status: 'pending',
+          },
+        }),
+      }
+    );
+
+    if (!createRes.ok) {
+      const details = await createRes.text();
+      console.error('Create failed:', details);
+      return NextResponse.json(
+        { error: 'Failed to submit application' },
+        { status: 502 }
+      );
+    }
 
     return NextResponse.json({
       success: true,
-      message: 'Application submitted successfully! It will be reviewed by our team.',
-      entry_uid: entry.uid
+      message:
+        'Application submitted successfully! It will be reviewed by an admin before publishing.',
     });
-
   } catch (error) {
-    console.error('Error creating entry:', error);
+    console.error('Contribute failed:', error);
     return NextResponse.json(
-      { error: 'Failed to submit application. Please try again.' },
+      { error: 'Internal server error' },
       { status: 500 }
     );
   }

@@ -34,8 +34,11 @@ export default function ChatPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  // Only scroll when new messages are added after initial load
   useEffect(() => {
-    scrollToBottom();
+    if (messages.length > 1) {
+      scrollToBottom();
+    }
   }, [messages]);
 
   const handleSendMessage = async (e: React.FormEvent) => {
@@ -118,21 +121,96 @@ export default function ChatPage() {
       </div>
 
       {/* Header */}
-      <div className="relative backdrop-blur-sm bg-theme-card border-b border-theme py-6 px-6 shadow-sm">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 rounded-xl bg-theme-primary flex items-center justify-center shadow-lg">
-              <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <div className="relative bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-32 px-6 shadow-sm overflow-hidden">
+        {/* Particle Background Canvas */}
+        <canvas
+          ref={(canvas) => {
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            if (!ctx) return;
+
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+
+            const particles: any[] = [];
+            const particleCount = 40;
+
+            class Particle {
+              x: number;
+              y: number;
+              size: number;
+              speedX: number;
+              speedY: number;
+
+              constructor() {
+                this.x = Math.random() * canvas!.width;
+                this.y = Math.random() * canvas!.height;
+                this.size = Math.random() * 1.5 + 0.5;
+                this.speedX = (Math.random() - 0.5) * 0.7;
+                this.speedY = (Math.random() - 0.5) * 0.7;
+              }
+
+              update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.x > canvas!.width) this.x = 0;
+                if (this.x < 0) this.x = canvas!.width;
+                if (this.y > canvas!.height) this.y = 0;
+                if (this.y < 0) this.y = canvas!.height;
+              }
+
+              draw() {
+                ctx!.fillStyle = 'rgba(255, 255, 255, 0.5)';
+                ctx!.beginPath();
+                ctx!.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx!.fill();
+              }
+            }
+
+            for (let i = 0; i < particleCount; i++) {
+              particles.push(new Particle());
+            }
+
+            let animationFrameId: number;
+            const animate = () => {
+              ctx!.clearRect(0, 0, canvas!.width, canvas!.height);
+              particles.forEach((particle) => {
+                particle.update();
+                particle.draw();
+              });
+              animationFrameId = requestAnimationFrame(animate);
+            };
+
+            animate();
+
+            return () => {
+              if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+              }
+            };
+          }}
+          className="absolute inset-0 w-full h-full pointer-events-none"
+        />
+
+        {/* Blur accent on edges */}
+        <div className="absolute -top-10 -right-10 w-40 h-40 bg-white opacity-20 rounded-full blur-2xl" />
+        <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-white opacity-10 rounded-full blur-2xl" />
+
+        <div className="max-w-4xl mx-auto relative z-10 text-center">
+          <div className="flex flex-col items-center gap-4">
+            <div className="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg border border-white/30 flex-shrink-0">
+              <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
               </svg>
             </div>
-            <div className='my-8'>
-              <h1 className="text-2xl font-bold text-theme-primary">DevDocs AI Assistant</h1>
-              <p className="text-theme-secondary text-sm">Powered by Llama 3.3 70B</p>
+            <div>
+              <h1 className="text-4xl md:text-5xl font-bold text-white mb-2">DevDocs AI Assistant</h1>
+              <p className="text-white/90 text-base md:text-lg">Powered by Llama 3.3 70B</p>
             </div>
           </div>
           {error && (
-            <div className="mt-3 text-sm text-red-600 bg-red-50 px-4 py-2 rounded-lg border border-red-200">
+            <div className="mt-6 text-sm text-red-100 bg-red-500/30 px-4 py-3 rounded-lg border border-red-300/50 backdrop-blur-sm">
               {error}
             </div>
           )}
@@ -171,7 +249,7 @@ export default function ChatPage() {
                 <div className={`px-4 py-3 rounded-2xl shadow-md ${
                   message.role === 'user'
                     ? 'bg-theme-secondary text-white'
-                    : 'bg-theme-card text-theme-primary border border-theme'
+                    : 'bg-theme-card text-theme-secondary border border-theme'
                 }`}>
                   <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
                   <span className={`text-xs mt-2 block ${
@@ -193,7 +271,7 @@ export default function ChatPage() {
                   <button
                     key={index}
                     onClick={() => handleQuickPrompt(prompt)}
-                    className="px-4 py-3 rounded-xl bg-theme-card hover:bg-theme-background border border-theme hover:border-[var(--color-primary)] text-theme-primary text-sm transition-all duration-200 hover:scale-105 shadow-sm hover:shadow-md"
+                    className="px-4 py-3 rounded-xl bg-theme-card hover:bg-theme-background border border-theme hover:border-[var(--color-primary)] text-theme-secondary text-sm transition-all duration-200 hover:scale-105 shadow-sm hover:shadow-md"
                   >
                     {prompt}
                   </button>
@@ -211,7 +289,7 @@ export default function ChatPage() {
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
                 </div>
-                <div className="bg-theme-card text-theme-primary border border-theme px-4 py-3 rounded-2xl shadow-md">
+                <div className="bg-theme-card text-theme-secondary border border-theme px-4 py-3 rounded-2xl shadow-md">
                   <div className="flex space-x-2">
                     <div className="w-2 h-2 bg-[var(--color-primary)] rounded-full animate-bounce"></div>
                     <div className="w-2 h-2 bg-[var(--color-secondary)] rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
@@ -233,7 +311,7 @@ export default function ChatPage() {
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask me anything about DevDocs..."
               disabled={isLoading}
-              className="w-full px-6 py-4 bg-theme-card border border-theme rounded-2xl text-theme-primary placeholder-theme-secondary focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)] focus:ring-opacity-50 disabled:opacity-50 transition-all shadow-sm"
+              className="w-full px-6 py-4 bg-theme-card border border-theme rounded-2xl text-theme-secondary placeholder-theme-secondary focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)] focus:ring-opacity-50 disabled:opacity-50 transition-all shadow-sm"
             />
           </div>
           <button
