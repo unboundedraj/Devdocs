@@ -38,6 +38,7 @@ export default function ContributeForm() {
   
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [message, setMessage] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const appStatuses = ['Active', 'Beta', 'Deprecated'];
   
@@ -142,6 +143,7 @@ export default function ContributeForm() {
       if (response.ok) {
         setStatus('success');
         setMessage(data.message);
+        setIsModalOpen(true);
         // Reset form
         setFormData({
           title: '',
@@ -167,49 +169,39 @@ export default function ContributeForm() {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-200">
-      <div className="mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">
-          Submit an Application
-        </h2>
-        <p className="text-gray-600">
-          Fill out the form below to contribute to our documentation library
-        </p>
-      </div>
-
-      {/* Status Messages */}
-      {status === 'success' && (
-        <div className="mb-6 p-4 bg-green-50 border-2 border-green-200 rounded-lg flex items-start gap-3">
-          <svg className="w-6 h-6 text-green-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <div>
-            <h3 className="font-semibold text-green-900">Success!</h3>
-            <p className="text-green-700">{message}</p>
-          </div>
+    <div className="min-h-screen bg-black py-12 px-4">
+      <div className="max-w-3xl mx-auto bg-gray-900 rounded-2xl shadow-xl p-8 border border-gray-800">
+        <div className="mb-8">
+          <h2 className="text-3xl font-bold text-white mb-2">
+            Submit an Application
+          </h2>
+          <p className="text-gray-300">
+            Fill out the form below to contribute to our documentation library
+          </p>
         </div>
-      )}
 
-      {status === 'error' && (
-        <div className="mb-6 p-4 bg-red-50 border-2 border-red-200 rounded-lg flex items-start gap-3">
-          <svg className="w-6 h-6 text-red-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <div>
-            <h3 className="font-semibold text-red-900">Error</h3>
-            <p className="text-red-700">{message}</p>
+        {/* Status Messages (Error Inline) */}
+
+        {status === 'error' && (
+          <div className="mb-6 p-4 bg-red-900/30 border-2 border-red-700 rounded-lg flex items-start gap-3">
+            <svg className="w-6 h-6 text-red-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div>
+              <h3 className="font-semibold text-red-200">Error</h3>
+              <p className="text-red-300">{message}</p>
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      <form onSubmit={handleSubmit} className="space-y-8">
+        <form onSubmit={handleSubmit} className="space-y-8">
         {/* Basic Information Section */}
         <div className="space-y-6">
-          <h3 className="text-xl font-bold text-gray-900 border-b pb-2">Basic Information</h3>
+          <h3 className="text-xl font-bold text-white border-b border-gray-800 pb-2">Basic Information</h3>
           
           {/* Application Name */}
           <div>
-            <label htmlFor="title" className="block text-sm font-semibold text-gray-900 mb-2">
+            <label htmlFor="title" className="block text-sm font-semibold text-gray-200 mb-2">
               Application Name <span className="text-red-600">*</span>
             </label>
             <input
@@ -219,14 +211,14 @@ export default function ContributeForm() {
               required
               value={formData.title}
               onChange={handleChange}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+              className="w-full px-4 py-3 border-2 border-gray-700 bg-gray-800 text-gray-100 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors placeholder-gray-400"
               placeholder="e.g., React, Vue.js, Django"
             />
           </div>
 
           {/* Official URL */}
           <div>
-            <label htmlFor="url" className="block text-sm font-semibold text-gray-900 mb-2">
+            <label htmlFor="url" className="block text-sm font-semibold text-gray-200 mb-2">
               Official Website/Documentation URL <span className="text-red-600">*</span>
             </label>
             <input
@@ -236,14 +228,14 @@ export default function ContributeForm() {
               required
               value={formData.url}
               onChange={handleChange}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+              className="w-full px-4 py-3 border-2 border-gray-700 bg-gray-800 text-gray-100 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors placeholder-gray-400"
               placeholder="https://example.com"
             />
           </div>
 
           {/* Application Status */}
           <div>
-            <label htmlFor="application_status" className="block text-sm font-semibold text-gray-900 mb-2">
+            <label htmlFor="application_status" className="block text-sm font-semibold text-gray-200 mb-2">
               Application Status <span className="text-red-600">*</span>
             </label>
             <select
@@ -252,7 +244,7 @@ export default function ContributeForm() {
               required
               value={formData.application_status}
               onChange={handleChange}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+              className="w-full px-4 py-3 border-2 border-gray-700 bg-gray-800 text-gray-100 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
             >
               {appStatuses.map(status => (
                 <option key={status} value={status}>{status}</option>
@@ -262,7 +254,7 @@ export default function ContributeForm() {
 
           {/* Category */}
           <div>
-            <label htmlFor="app_category" className="block text-sm font-semibold text-gray-900 mb-2">
+            <label htmlFor="app_category" className="block text-sm font-semibold text-gray-200 mb-2">
               Category
             </label>
             <select
@@ -270,7 +262,7 @@ export default function ContributeForm() {
               name="app_category"
               value={formData.app_category}
               onChange={handleChange}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+              className="w-full px-4 py-3 border-2 border-gray-700 bg-gray-800 text-gray-100 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
             >
               <option value="">Select a category</option>
               {categories.map(cat => (
@@ -281,7 +273,7 @@ export default function ContributeForm() {
 
           {/* Maintainer Name */}
           <div>
-            <label htmlFor="maintainer_name" className="block text-sm font-semibold text-gray-900 mb-2">
+            <label htmlFor="maintainer_name" className="block text-sm font-semibold text-gray-200 mb-2">
               Maintainer/Organization Name
             </label>
             <input
@@ -290,7 +282,7 @@ export default function ContributeForm() {
               name="maintainer_name"
               value={formData.maintainer_name}
               onChange={handleChange}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+              className="w-full px-4 py-3 border-2 border-gray-700 bg-gray-800 text-gray-100 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors placeholder-gray-400"
               placeholder="e.g., Meta, Google, Individual Developer"
             />
           </div>
@@ -298,11 +290,11 @@ export default function ContributeForm() {
 
         {/* Descriptions Section */}
         <div className="space-y-6">
-          <h3 className="text-xl font-bold text-gray-900 border-b pb-2">Descriptions</h3>
+          <h3 className="text-xl font-bold text-white border-b border-gray-800 pb-2">Descriptions</h3>
 
           {/* Short Description */}
           <div>
-            <label htmlFor="app_description" className="block text-sm font-semibold text-gray-900 mb-2">
+            <label htmlFor="app_description" className="block text-sm font-semibold text-gray-200 mb-2">
               Short Description <span className="text-red-600">*</span>
             </label>
             <textarea
@@ -312,14 +304,14 @@ export default function ContributeForm() {
               value={formData.app_description}
               onChange={handleChange}
               rows={3}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors resize-none"
+              className="w-full px-4 py-3 border-2 border-gray-700 bg-gray-800 text-gray-100 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors resize-none placeholder-gray-400"
               placeholder="Brief overview (shown in cards)"
             />
           </div>
 
           {/* Main Description */}
           <div>
-            <label htmlFor="main_description" className="block text-sm font-semibold text-gray-900 mb-2">
+            <label htmlFor="main_description" className="block text-sm font-semibold text-gray-200 mb-2">
               Main Description <span className="text-red-600">*</span>
             </label>
             <textarea
@@ -329,17 +321,17 @@ export default function ContributeForm() {
               value={formData.main_description}
               onChange={handleChange}
               rows={6}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors resize-none"
+              className="w-full px-4 py-3 border-2 border-gray-700 bg-gray-800 text-gray-100 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors resize-none placeholder-gray-400"
               placeholder="Detailed description of what this application does and why it's useful..."
             />
-            <p className="mt-2 text-sm text-gray-500">
+            <p className="mt-2 text-sm text-gray-400">
               You can use HTML tags for formatting
             </p>
           </div>
 
           {/* Getting Started */}
           <div>
-            <label htmlFor="getting_started" className="block text-sm font-semibold text-gray-900 mb-2">
+            <label htmlFor="getting_started" className="block text-sm font-semibold text-gray-200 mb-2">
               Getting Started Guide
             </label>
             <textarea
@@ -348,10 +340,10 @@ export default function ContributeForm() {
               value={formData.getting_started}
               onChange={handleChange}
               rows={5}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors resize-none"
+              className="w-full px-4 py-3 border-2 border-gray-700 bg-gray-800 text-gray-100 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors resize-none placeholder-gray-400"
               placeholder="Quick start guide or installation instructions..."
             />
-            <p className="mt-2 text-sm text-gray-500">
+            <p className="mt-2 text-sm text-gray-400">
               Not full docs, just pointers to get started. HTML supported.
             </p>
           </div>
@@ -359,8 +351,8 @@ export default function ContributeForm() {
 
         {/* Tags Section */}
         <div>
-          <h3 className="text-xl font-bold text-gray-900 border-b pb-2 mb-4">Tags</h3>
-          <p className="text-sm text-gray-600 mb-4">Select all that apply</p>
+          <h3 className="text-xl font-bold text-white border-b border-gray-800 pb-2 mb-4">Tags</h3>
+          <p className="text-sm text-gray-400 mb-4">Select all that apply</p>
           <div className="flex flex-wrap gap-2">
             {availableTags.map(tag => (
               <button
@@ -370,7 +362,7 @@ export default function ContributeForm() {
                 className={`px-4 py-2 rounded-lg border-2 transition-all ${
                   formData.app_tags.includes(tag)
                     ? 'bg-indigo-600 text-white border-indigo-600'
-                    : 'bg-white text-gray-700 border-gray-300 hover:border-indigo-300'
+                    : 'bg-gray-800 text-gray-200 border-gray-700 hover:border-indigo-300'
                 }`}
               >
                 {tag}
@@ -381,16 +373,16 @@ export default function ContributeForm() {
 
         {/* Key Features Section */}
         <div>
-          <h3 className="text-xl font-bold text-gray-900 border-b pb-2 mb-4">Key Features</h3>
+          <h3 className="text-xl font-bold text-white border-b border-gray-800 pb-2 mb-4">Key Features</h3>
           {keyFeatures.map((feature, index) => (
-            <div key={index} className="mb-4 p-4 border-2 border-gray-200 rounded-lg">
+            <div key={index} className="mb-4 p-4 border-2 border-gray-800 rounded-lg bg-gray-900">
               <div className="flex justify-between items-center mb-3">
-                <h4 className="font-semibold text-gray-900">Feature {index + 1}</h4>
+                <h4 className="font-semibold text-white">Feature {index + 1}</h4>
                 {keyFeatures.length > 1 && (
                   <button
                     type="button"
                     onClick={() => removeKeyFeature(index)}
-                    className="text-red-600 hover:text-red-700 text-sm font-medium"
+                    className="text-red-400 hover:text-red-300 text-sm font-medium"
                   >
                     Remove
                   </button>
@@ -401,21 +393,21 @@ export default function ContributeForm() {
                 value={feature.app_key_feature_title}
                 onChange={(e) => updateKeyFeature(index, 'app_key_feature_title', e.target.value)}
                 placeholder="Feature title"
-                className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg mb-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full px-4 py-2 border-2 border-gray-700 bg-gray-800 text-gray-100 rounded-lg mb-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-400"
               />
               <textarea
                 value={feature.app_key_features_description}
                 onChange={(e) => updateKeyFeature(index, 'app_key_features_description', e.target.value)}
                 placeholder="Feature description"
                 rows={2}
-                className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full px-4 py-2 border-2 border-gray-700 bg-gray-800 text-gray-100 rounded-lg resize-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-400"
               />
             </div>
           ))}
           <button
             type="button"
             onClick={addKeyFeature}
-            className="text-indigo-600 hover:text-indigo-700 font-medium flex items-center gap-2"
+            className="text-indigo-400 hover:text-indigo-300 font-medium flex items-center gap-2"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -426,16 +418,16 @@ export default function ContributeForm() {
 
         {/* Useful Links Section */}
         <div>
-          <h3 className="text-xl font-bold text-gray-900 border-b pb-2 mb-4">Useful Links</h3>
+          <h3 className="text-xl font-bold text-white border-b border-gray-800 pb-2 mb-4">Useful Links</h3>
           {usefulLinks.map((link, index) => (
-            <div key={index} className="mb-4 p-4 border-2 border-gray-200 rounded-lg">
+            <div key={index} className="mb-4 p-4 border-2 border-gray-800 rounded-lg bg-gray-900">
               <div className="flex justify-between items-center mb-3">
-                <h4 className="font-semibold text-gray-900">Link {index + 1}</h4>
+                <h4 className="font-semibold text-white">Link {index + 1}</h4>
                 {usefulLinks.length > 1 && (
                   <button
                     type="button"
                     onClick={() => removeUsefulLink(index)}
-                    className="text-red-600 hover:text-red-700 text-sm font-medium"
+                    className="text-red-400 hover:text-red-300 text-sm font-medium"
                   >
                     Remove
                   </button>
@@ -446,21 +438,21 @@ export default function ContributeForm() {
                 value={link.useful_link_label}
                 onChange={(e) => updateUsefulLink(index, 'label', e.target.value)}
                 placeholder="Link label (e.g., GitHub, Documentation)"
-                className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg mb-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full px-4 py-2 border-2 border-gray-700 bg-gray-800 text-gray-100 rounded-lg mb-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-400"
               />
               <input
                 type="url"
                 value={link.useful_link_url.url}
                 onChange={(e) => updateUsefulLink(index, 'url', e.target.value)}
                 placeholder="https://example.com"
-                className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full px-4 py-2 border-2 border-gray-700 bg-gray-800 text-gray-100 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-400"
               />
             </div>
           ))}
           <button
             type="button"
             onClick={addUsefulLink}
-            className="text-indigo-600 hover:text-indigo-700 font-medium flex items-center gap-2"
+            className="text-indigo-400 hover:text-indigo-300 font-medium flex items-center gap-2"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -474,7 +466,7 @@ export default function ContributeForm() {
           <button
             type="submit"
             disabled={status === 'loading'}
-            className="w-full bg-indigo-600 text-white py-4 px-6 rounded-lg font-bold text-lg hover:bg-indigo-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+            className="w-full bg-indigo-600 text-white py-4 px-6 rounded-lg font-bold text-lg hover:bg-indigo-700 transition-colors disabled:bg-gray-600 disabled:cursor-not-allowed shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
           >
             {status === 'loading' ? (
               <>
@@ -494,7 +486,46 @@ export default function ContributeForm() {
             )}
           </button>
         </div>
-      </form>
+        </form>
+      </div>
+
+      {/* Success Modal Overlay */}
+      {status === 'success' && isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" role="dialog" aria-modal="true">
+          <div className="mx-4 w-full max-w-2xl bg-white rounded-2xl shadow-2xl overflow-hidden">
+            <div className="p-6 sm:p-8">
+              <div className="flex items-start justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="rounded-full bg-green-100 p-2 text-green-700">
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900">Application Submitted</h3>
+                </div>
+                <button
+                  aria-label="Close"
+                  onClick={() => { setIsModalOpen(false); setStatus('idle'); }}
+                  className="rounded-md p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              <p className="mt-4 text-gray-700">{message}</p>
+              <div className="mt-6 flex justify-end gap-3">
+                <button
+                  onClick={() => { setIsModalOpen(false); setStatus('idle'); }}
+                  className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

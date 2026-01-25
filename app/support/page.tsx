@@ -19,10 +19,10 @@ export default async function SupportPage() {
 
       {/* Support Channels */}
       {supportPage.support_channels && supportPage.support_channels.length > 0 && (
-        <section className="py-20 px-6">
+        <section className="py-20 bg-black px-6">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-20">
-              <h2 className="text-4xl font-bold text-gray-900 mb-6">
+              <h2 className="text-4xl font-bold text-white mb-6">
                 Multiple Ways to Connect
               </h2>
               <p className="text-lg text-gray-600">

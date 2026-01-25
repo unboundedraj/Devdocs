@@ -9,7 +9,7 @@ interface SupportChannelCardProps {
 export default function SupportChannelCard({ channel }: SupportChannelCardProps) {
   return (
     <a
-      href={channel.uri_for_support}
+      href="https://github.com/unboundedraj/Devdocs"
       target="_blank"
       rel="noopener noreferrer"
       className="block bg-white rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 p-8 border border-gray-200 group hover:border-indigo-300 overflow-hidden relative"
