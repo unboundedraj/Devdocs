@@ -16,6 +16,7 @@ export default function ApplicationsContent({ applications }: ApplicationsConten
   const [sortBy, setSortBy] = useState<'name' | 'recent' | 'popular'>('name');
   const [showFilters, setShowFilters] = useState(false);
   const [upvotedUids, setUpvotedUids] = useState<Set<string>>(new Set());
+  const [likedUids, setLikedUids] = useState<Set<string>>(new Set());
 
   // Fetch user's upvoted applications on mount and when session changes
   useEffect(() => {
@@ -37,6 +38,28 @@ export default function ApplicationsContent({ applications }: ApplicationsConten
     };
 
     fetchUpvoted();
+  }, [session]);
+
+  // Fetch user's liked applications on mount and when session changes
+  useEffect(() => {
+    if (!session?.user) {
+      setLikedUids(new Set());
+      return;
+    }
+
+    const fetchLiked = async () => {
+      try {
+        const res = await fetch('/api/user/liked');
+        if (res.ok) {
+          const data = await res.json();
+          setLikedUids(new Set(data.likedApplicationUids || []));
+        }
+      } catch (error) {
+        console.error('Failed to fetch liked applications:', error);
+      }
+    };
+
+    fetchLiked();
   }, [session]);
 
   // Get unique categories
@@ -354,8 +377,12 @@ export default function ApplicationsContent({ applications }: ApplicationsConten
                     key={app.uid} 
                     application={app} 
                     isUpvoted={upvotedUids.has(app.uid)}
+                    isLiked={likedUids.has(app.uid)}
                     onUpvoteSuccess={() => {
                       setUpvotedUids(prev => new Set([...prev, app.uid]));
+                    }}
+                    onLikeSuccess={() => {
+                      setLikedUids(prev => new Set([...prev, app.uid]));
                     }}
                   />
                 ))}

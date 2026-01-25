@@ -111,6 +111,48 @@ export default function ProfileClient({ profile }: { profile: Profile }) {
             </div>
           )}
         </section>
+
+        {/* Liked Applications */}
+        <section className="mt-12">
+          <div className="mb-6">
+            <h2 className="text-2xl sm:text-3xl font-bold text-theme-accent mb-2">
+              ❤️ Liked Applications
+            </h2>
+            <div className="h-1 w-16 bg-gradient-to-r from-pink-500 to-red-500 rounded-full" />
+          </div>
+
+          {likedApps.length === 0 ? (
+            <div className="bg-theme-card border border-dashed border-theme rounded-xl p-8 text-center">
+              <p className="text-theme-secondary text-lg">
+                You haven't liked any applications yet.
+              </p>
+              <Link
+                href="/applications"
+                className="inline-block mt-4 px-6 py-2 bg-pink-600 text-white rounded-lg font-medium hover:shadow-lg transition-all duration-300 hover:scale-105"
+              >
+                Browse Applications
+              </Link>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              {likedApps.map((app) => (
+                <Link
+                  key={app.uid}
+                  href={`/applications/${app.uid}`}
+                  className="group bg-theme-card border border-theme rounded-lg p-6 hover:border-pink-500 transition-all duration-300 hover:shadow-lg hover:scale-105 transform"
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="text-xl">❤️</span>
+                    <span className="text-theme-accent font-semibold group-hover:text-pink-200 transition-colors duration-300 flex-1 truncate">
+                      {app.title || app.uid}
+                    </span>
+                    <span className="text-theme-secondary group-hover:text-pink-300 transition-colors duration-300">→</span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
+        </section>
       </div>
     </div>
   );

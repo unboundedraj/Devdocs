@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Application } from '@/types/application';
 import { signIn, useSession } from 'next-auth/react';
@@ -7,13 +7,26 @@ interface ApplicationCardProps {
   application: Application;
   isUpvoted?: boolean;
   onUpvoteSuccess?: () => void;
+  isLiked?: boolean;
+  onLikeSuccess?: () => void;
 }
 
-export default function ApplicationCard({ application, isUpvoted: initialIsUpvoted = false, onUpvoteSuccess }: ApplicationCardProps) {
+export default function ApplicationCard({ application, isUpvoted: initialIsUpvoted = false, onUpvoteSuccess, isLiked: initialIsLiked = false, onLikeSuccess }: ApplicationCardProps) {
   const { data: session, status } = useSession();
   const [upvotes, setUpvotes] = useState(application.upvotes || 0);
   const [isUpvoting, setIsUpvoting] = useState(false);
   const [hasUpvoted, setHasUpvoted] = useState(initialIsUpvoted);
+  const [isLiking, setIsLiking] = useState(false);
+  const [hasLiked, setHasLiked] = useState(initialIsLiked);
+
+  // Keep local flags in sync with props when session data arrives
+  useEffect(() => {
+    setHasUpvoted(initialIsUpvoted);
+  }, [initialIsUpvoted]);
+
+  useEffect(() => {
+    setHasLiked(initialIsLiked);
+  }, [initialIsLiked]);
 
   const handleUpvote = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -60,6 +73,48 @@ export default function ApplicationCard({ application, isUpvoted: initialIsUpvot
       }
     } finally {
       setIsUpvoting(false);
+    }
+  };
+
+  const handleLike = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (status === 'loading' || isLiking || hasLiked) return;
+
+    if (!session?.user) {
+      await signIn('google');
+      return;
+    }
+
+    setIsLiking(true);
+    try {
+      const res = await fetch('/api/like', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ applicationUid: application.uid }),
+      });
+
+      if (res.status === 401) {
+        await signIn('google');
+        return;
+      }
+
+      const data = await res.json().catch(() => null);
+
+      if (!res.ok) {
+        console.error('Like failed:', data);
+        return;
+      }
+
+      if (data?.success && !data?.alreadyLiked) {
+        setHasLiked(true);
+        onLikeSuccess?.();
+      } else if (data?.alreadyLiked) {
+        setHasLiked(true);
+      }
+    } finally {
+      setIsLiking(false);
     }
   };
 
@@ -130,6 +185,23 @@ export default function ApplicationCard({ application, isUpvoted: initialIsUpvot
           </span>
 
           <div className="flex items-center gap-4">
+            {/* Like (only for authenticated users) */}
+            {session?.user && (
+              <button
+                onClick={handleLike}
+                disabled={isLiking || hasLiked}
+                className={`flex items-center gap-1.5 px-2 py-1 rounded-lg text-sm font-medium transition-all border border-transparent ${
+                  hasLiked
+                    ? 'bg-gray-800 text-pink-200 border-pink-500/40 cursor-default'
+                    : 'text-gray-300 hover:text-white hover:bg-gray-800 border-gray-700'
+                } ${isLiking ? 'opacity-50 cursor-wait' : ''}`}
+                title={hasLiked ? 'Added to your likes' : 'Like this application'}
+              >
+                <span className="text-lg">{hasLiked ? '❤️' : '🤍'}</span>
+                <span className={hasLiked ? 'font-semibold text-pink-100' : ''}>Like</span>
+              </button>
+            )}
+
             {/* Upvote */}
             <button
               onClick={handleUpvote}

@@ -8,7 +8,7 @@ async function getUserProfile(email: string) {
   const query = encodeURIComponent(JSON.stringify({ email }));
 
   const res = await fetch(
-    `${API_BASE}/content_types/users/entries?query=${query}&include[]=upvoted_applications`,
+    `${API_BASE}/content_types/users/entries?query=${query}&include[]=upvoted_applications&include[]=liked_applications`,
     {
       headers: {
         api_key: process.env.NEXT_PUBLIC_CONTENTSTACK_API_KEY!,
