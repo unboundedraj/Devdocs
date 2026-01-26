@@ -58,12 +58,10 @@ export default function Header() {
               <span className="relative z-10">Support</span>
               <div className="absolute inset-0 bg-gradient-to-r from-gray-800 to-gray-700 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
             </Link>
-            {session && (
-              <Link href="/chat" className="text-gray-300 hover:text-white px-4 py-2 rounded-lg font-medium transition-all duration-200 hover:bg-gray-900 relative group">
-                <span className="relative z-10">AI Chat</span>
-                <div className="absolute inset-0 bg-gradient-to-r from-gray-800 to-gray-700 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
-              </Link>
-            )}
+            <Link href="/chat" className="text-gray-300 hover:text-white px-4 py-2 rounded-lg font-medium transition-all duration-200 hover:bg-gray-900 relative group">
+              <span className="relative z-10">AI Chat</span>
+              <div className="absolute inset-0 bg-gradient-to-r from-gray-800 to-gray-700 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
+            </Link>
           </div>
 
           {/* Auth & CTA Section */}
@@ -171,9 +169,7 @@ export default function Header() {
               <Link href="/applications" onClick={() => setShowMobileMenu(false)} className="block text-gray-300 hover:text-white px-3 py-2 rounded-lg font-medium">Applications</Link>
               <Link href="/faqs" onClick={() => setShowMobileMenu(false)} className="block text-gray-300 hover:text-white px-3 py-2 rounded-lg font-medium">FAQs</Link>
               <Link href="/support" onClick={() => setShowMobileMenu(false)} className="block text-gray-300 hover:text-white px-3 py-2 rounded-lg font-medium">Support</Link>
-              {session && (
-                <Link href="/chat" onClick={() => setShowMobileMenu(false)} className="block text-gray-300 hover:text-white px-3 py-2 rounded-lg font-medium">AI Chat</Link>
-              )}
+              <Link href="/chat" onClick={() => setShowMobileMenu(false)} className="block text-gray-300 hover:text-white px-3 py-2 rounded-lg font-medium">AI Chat</Link>
 
               <div className="pt-2 border-t border-gray-800">
                 {status === 'loading' ? (
