@@ -2,13 +2,19 @@
 
 import Link from 'next/link';
 import { useSession, signIn, signOut } from 'next-auth/react';
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
 
 export default function Header() {
   const { data: session, status } = useSession();
   const [showDropdown, setShowDropdown] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
   const router = useRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    setShowMobileMenu(false);
+  }, [pathname]);
 
   const handleContributeClick = () => {
     if (status === 'authenticated') {
@@ -145,12 +151,58 @@ export default function Header() {
           </div>
 
           {/* Mobile Menu Button */}
-          <button className="md:hidden text-gray-300 hover:text-white p-2 rounded-lg hover:bg-gray-900 transition-colors border border-gray-800" aria-label="Menu">
+          <button
+            onClick={() => setShowMobileMenu(!showMobileMenu)}
+            aria-expanded={showMobileMenu}
+            aria-controls="mobile-menu"
+            className="md:hidden text-gray-300 hover:text-white p-2 rounded-lg hover:bg-gray-900 transition-colors border border-gray-800"
+            aria-label="Menu"
+          >
             <svg className="w-6 h-6" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
               <path d="M4 6h16M4 12h16M4 18h16"></path>
             </svg>
           </button>
         </div>
+
+        {showMobileMenu && (
+          <div id="mobile-menu" className="md:hidden mt-2 bg-black/95 border-t border-gray-800 shadow-2xl z-40">
+            <div className="px-4 py-4 space-y-2">
+              <Link href="/" onClick={() => setShowMobileMenu(false)} className="block text-gray-300 hover:text-white px-3 py-2 rounded-lg font-medium">Home</Link>
+              <Link href="/applications" onClick={() => setShowMobileMenu(false)} className="block text-gray-300 hover:text-white px-3 py-2 rounded-lg font-medium">Applications</Link>
+              <Link href="/faqs" onClick={() => setShowMobileMenu(false)} className="block text-gray-300 hover:text-white px-3 py-2 rounded-lg font-medium">FAQs</Link>
+              <Link href="/support" onClick={() => setShowMobileMenu(false)} className="block text-gray-300 hover:text-white px-3 py-2 rounded-lg font-medium">Support</Link>
+              {session && (
+                <Link href="/chat" onClick={() => setShowMobileMenu(false)} className="block text-gray-300 hover:text-white px-3 py-2 rounded-lg font-medium">AI Chat</Link>
+              )}
+
+              <div className="pt-2 border-t border-gray-800">
+                {status === 'loading' ? (
+                  <div className="w-8 h-8 rounded-full bg-gray-800 animate-pulse"></div>
+                ) : session ? (
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-3">
+                      <img src={session.user?.image || '/default-avatar.png'} alt={session.user?.name || 'User'} className="w-10 h-10 rounded-full border-2 border-gray-600" />
+                      <div>
+                        <p className="text-white font-medium">{session.user?.name}</p>
+                        <p className="text-sm text-gray-400">{session.user?.email}</p>
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <Link href="/profile" onClick={() => setShowMobileMenu(false)} className="block px-3 py-2 text-sm text-gray-300 hover:bg-gray-800 hover:text-white rounded">Profile</Link>
+                      <button onClick={() => { setShowMobileMenu(false); signOut(); }} className="w-full text-left px-3 py-2 text-sm text-red-400 hover:bg-red-950 hover:text-red-300 rounded">Sign Out</button>
+                    </div>
+                    <button onClick={() => { setShowMobileMenu(false); handleContributeClick(); }} className="w-full mt-2 bg-theme-accent text-white px-4 py-2 rounded-full font-semibold">Contribute</button>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <button onClick={() => { setShowMobileMenu(false); signIn('google'); }} className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-gray-900 to-gray-800 border border-gray-700 text-white px-4 py-2 rounded-lg font-semibold">Sign in with Google</button>
+                    <button onClick={() => { setShowMobileMenu(false); handleContributeClick(); }} className="w-full bg-gradient-to-r from-gray-700 to-gray-600 text-white px-4 py-2 rounded-full font-semibold">Contribute</button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </nav>
     </header>
   );
