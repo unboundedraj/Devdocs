@@ -31,7 +31,6 @@ export default function ChangelogList({ changelogs }: ChangelogListProps) {
 
   return (
     <div className="relative">
-      {/* Vertical Timeline Line */}
       <div className="absolute left-6 top-0 bottom-0 w-1 bg-gradient-to-b from-indigo-500 via-indigo-300 to-transparent"></div>
 
       <div className="space-y-12">
@@ -43,10 +42,8 @@ export default function ChangelogList({ changelogs }: ChangelogListProps) {
             <div className="space-y-6">
               {groupedByYear[year].map((changelog: Changelog) => (
                 <div key={changelog.uid} className="relative pl-20">
-                  {/* Timeline Dot */}
                   <div className="absolute left-0 top-4 w-4 h-4 bg-indigo-600 rounded-full border-4 border-white shadow-md"></div>
 
-                  {/* Changelog Item */}
                   <ChangelogItem changelog={changelog} />
                 </div>
               ))}

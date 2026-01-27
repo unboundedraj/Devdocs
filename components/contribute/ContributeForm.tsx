@@ -3,6 +3,7 @@
 import React from "react"
 
 import { useState } from 'react';
+import RichTextEditor from './RichTextEditor';
 
 interface KeyFeature {
   app_key_feature_title: string;
@@ -321,40 +322,28 @@ export default function ContributeForm() {
 
           {/* Main Description */}
           <div>
-            <label htmlFor="main_description" className="block text-sm font-semibold text-gray-900 mb-2">
-              Main Description <span className="text-red-600">*</span>
-            </label>
-            <textarea
-              id="main_description"
-              name="main_description"
+            <RichTextEditor
+              label="Main Description"
               required
               value={formData.main_description}
-              onChange={handleChange}
-              rows={6}
-              className="w-full px-4 py-3 border-2 border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors resize-none"
+              onChange={(content) => setFormData({ ...formData, main_description: content })}
               placeholder="Detailed description of what this application does and why it's useful..."
             />
             <p className="mt-2 text-sm text-gray-500">
-              You can use HTML tags for formatting
+              Use the toolbar above to format your content
             </p>
           </div>
 
           {/* Getting Started */}
           <div>
-            <label htmlFor="getting_started" className="block text-sm font-semibold text-gray-900 mb-2">
-              Getting Started Guide
-            </label>
-            <textarea
-              id="getting_started"
-              name="getting_started"
+            <RichTextEditor
+              label="Getting Started Guide"
               value={formData.getting_started}
-              onChange={handleChange}
-              rows={5}
-              className="w-full px-4 py-3 border-2 border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors resize-none"
+              onChange={(content) => setFormData({ ...formData, getting_started: content })}
               placeholder="Quick start guide or installation instructions..."
             />
             <p className="mt-2 text-sm text-gray-500">
-              Not full docs, just pointers to get started. HTML supported.
+              Not full docs, just pointers to get started. Use the toolbar to format.
             </p>
           </div>
         </div>

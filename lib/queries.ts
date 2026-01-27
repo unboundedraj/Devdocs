@@ -23,7 +23,7 @@ export async function getThemeSettings(): Promise<ThemeSettings | null> {
 export async function getHomepage(): Promise<Homepage | null> {
   try {
     const response = await Stack.ContentType('homepage')
-      .Entry('bltYOUR_ENTRY_UID') // You might need the specific entry UID, or use .Query().findOne()
+      .Entry('bltYOUR_ENTRY_UID') 
       .toJSON()
       .fetch();
 
@@ -34,7 +34,6 @@ export async function getHomepage(): Promise<Homepage | null> {
   }
 }
 
-// Alternative if you don't know the entry UID:
 export async function getHomepageByQuery(): Promise<Homepage | null> {
   try {
     const response = await Stack.ContentType('homepage')
@@ -59,22 +58,17 @@ export async function getAllApplications(): Promise<Application[]> {
       .toJSON()
       .find();
 
-    // Contentstack returns response as [entries, count] or {entries: [], count: number}
-    // Handle both response formats
+
     let applications: any[] = [];
     
     if (Array.isArray(response)) {
-      // If response is an array, first element is entries array
       applications = response[0] || [];
     } else if (response && typeof response === 'object') {
-      // If response is an object, check for entries property
       applications = response.entries || response[0] || [];
     }
 
-    // Ensure upvotes field is properly mapped (handle both upvotes and upvotes_count)
-    // Also ensure it's a number, defaulting to 0 if undefined/null
+  
     const mappedApplications = applications.map((app: any) => {
-      // Check for upvotes in multiple possible field names
       let upvotesValue: number = 0;
       
       if (app.upvotes !== undefined && app.upvotes !== null) {
@@ -96,7 +90,6 @@ export async function getAllApplications(): Promise<Application[]> {
   }
 }
 
-// Get single application by UID - Using Query
 export async function getApplicationByUid(uid: string): Promise<Application | null> {
   try {
     const response = await Stack.ContentType('application')
@@ -104,7 +97,6 @@ export async function getApplicationByUid(uid: string): Promise<Application | nu
       .toJSON()
       .fetch();
 
-    // Ensure upvotes field is properly mapped
     let upvotesValue: number = 0;
     const appResponse = response as any;
     
@@ -140,7 +132,6 @@ export async function getSupportPage(): Promise<Supportpage | null> {
   }
 }
 
-// Get all changelogs for a specific application
 export async function getChangelogsByApplicationUid(applicationUid: string): Promise<Changelog[]> {
   try {
     const response = await Stack.ContentType('changelog')
@@ -151,16 +142,13 @@ export async function getChangelogsByApplicationUid(applicationUid: string): Pro
 
     const allChangelogs = response[0] || [];
     
-    // Filter changelogs for this specific application
     const appChangelogs = allChangelogs.filter((changelog: any) => {
-      // Check if application_reference matches the applicationUid
       if (Array.isArray(changelog.application_reference)) {
         return changelog.application_reference.some((ref: any) => ref.uid === applicationUid);
       }
       return changelog.application_reference?.uid === applicationUid;
     });
 
-    // Sort by release_date descending (newest first)
     return appChangelogs.sort((a: any, b: any) => {
       const dateA = new Date(a.release_date || a.created_at);
       const dateB = new Date(b.release_date || b.created_at);
