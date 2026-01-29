@@ -35,7 +35,6 @@ export async function POST(req: Request) {
       );
     }
 
-    // ✅ Create DRAFT entry only
     const createRes = await fetch(
       `${API_BASE}/content_types/application/entries`,
       {
@@ -59,7 +58,6 @@ export async function POST(req: Request) {
             app_key_features: app_key_features?.length ? app_key_features : undefined,
             app_useful_links: app_useful_links?.length ? app_useful_links : undefined,
 
-            // optional but very useful for admin review
             contributed_by: session.user.email,
             contribution_status: 'pending',
           },

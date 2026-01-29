@@ -1,12 +1,17 @@
 import { getAllApplications } from '@/lib/queries';
+import { setLivePreviewQueryParams } from '@/lib/utils';
 import Link from 'next/link';
 
 export default async function ApplicationDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const { slug } = await params;
+  const urlParams = await searchParams;
+  setLivePreviewQueryParams(urlParams);
   
   const applications = await getAllApplications();
   const application = applications.find(app => app.uid === slug);

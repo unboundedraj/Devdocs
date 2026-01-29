@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import SessionProvider from '@/components/SessionProvider';
+import LivePreviewProvider from '@/components/LivePreviewProvider';
 import { getThemeSettings } from '@/lib/queries';
 
 const inter = Inter({ subsets: ["latin"] });
@@ -62,6 +63,7 @@ export default async function RootLayout({
       </head>
       <body className={inter.className}>
         <SessionProvider>
+          <LivePreviewProvider />
           <Header />
           {children}
           <Footer />

@@ -1,10 +1,18 @@
 import { getFAQs } from '@/lib/queries'
+import { setLivePreviewQueryParams } from '@/lib/utils'
 import { FAQ } from '@/types/faq'
 import FAQClient from '@/components/faq/FAQClient'
 import FAQHeader from '@/components/faq/FAQHeader'
 import { WavyBackground } from '@/components/ui/wavy-background'
 
-export default async function FAQsPage() {
+export default async function FAQsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const params = await searchParams;
+  setLivePreviewQueryParams(params);
+  
   const faqs: FAQ[] = await getFAQs()
   const categories = Array.from(
     new Set(

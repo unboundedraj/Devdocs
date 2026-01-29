@@ -1,10 +1,18 @@
 import { getHomepageByQuery } from '@/lib/queries';
+import { setLivePreviewQueryParams } from '@/lib/utils';
 import HeroSection from '@/components/homepage/HeroSection';
 import ValuePropositions from '@/components/homepage/ValuePropositions';
 import FeaturedApplications from '@/components/homepage/FeaturedApplications';
 import ContributionCTA from '@/components/homepage/ContributionCTA';
 
-export default async function HomePage() {
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const params = await searchParams;
+  setLivePreviewQueryParams(params);
+  
   const homepage = await getHomepageByQuery();
 
   if (!homepage) {
