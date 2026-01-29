@@ -18,7 +18,6 @@ export default function ApplicationsContent({ applications }: ApplicationsConten
   const [upvotedUids, setUpvotedUids] = useState<Set<string>>(new Set());
   const [likedUids, setLikedUids] = useState<Set<string>>(new Set());
 
-  // Fetch user's upvoted applications on mount and when session changes
   useEffect(() => {
     if (!session?.user) {
       setUpvotedUids(new Set());
@@ -40,7 +39,6 @@ export default function ApplicationsContent({ applications }: ApplicationsConten
     fetchUpvoted();
   }, [session]);
 
-  // Fetch user's liked applications on mount and when session changes
   useEffect(() => {
     if (!session?.user) {
       setLikedUids(new Set());
@@ -71,11 +69,9 @@ export default function ApplicationsContent({ applications }: ApplicationsConten
     return Array.from(cats).sort();
   }, [applications]);
 
-  // Filter and sort applications
   const filteredAndSortedApps = useMemo(() => {
     let filtered = [...applications];
 
-    // Filter by search query
     if (searchQuery) {
       filtered = filtered.filter(app => 
         app.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -110,7 +106,7 @@ export default function ApplicationsContent({ applications }: ApplicationsConten
   return (
     <>
       {/* Hero Section with Search - Centered */}
-      <section className="relative bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-32 px-6 overflow-hidden">
+      <section className="relative bg-black text-white py-32 px-6 overflow-hidden">
         {/* Particle Background Canvas */}
         <canvas
           ref={(canvas) => {
@@ -150,7 +146,7 @@ export default function ApplicationsContent({ applications }: ApplicationsConten
               }
 
               draw() {
-                ctx!.fillStyle = 'rgba(255, 255, 255, 0.7)';
+                ctx!.fillStyle = 'rgba(156, 163, 175, 0.4)';
                 ctx!.beginPath();
                 ctx!.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                 ctx!.fill();

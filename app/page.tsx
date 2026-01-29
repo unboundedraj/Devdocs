@@ -33,13 +33,13 @@ export default async function HomePage() {
         propositions={homepage.value_propositions}
       />
 
-<FeaturedApplications applications={homepage.featured_applications} />
-
       <ContributionCTA
         heading={homepage.contribution_cta?.cta_heading}
         description={homepage.contribution_cta?.cta_description}
         url={homepage.contribution_cta?.cta_url}
       />
+
+      <FeaturedApplications applications={homepage.featured_applications} />
     </main>
   );
 }

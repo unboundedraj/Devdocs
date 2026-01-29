@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Application } from '@/types/application';
 import { signIn, useSession } from 'next-auth/react';
+import { GlowingEffect } from '@/components/ui/glowing-effect';
 
 interface ApplicationCardProps {
   application: Application;
@@ -19,7 +20,6 @@ export default function ApplicationCard({ application, isUpvoted: initialIsUpvot
   const [isLiking, setIsLiking] = useState(false);
   const [hasLiked, setHasLiked] = useState(initialIsLiked);
 
-  // Keep local flags in sync with props when session data arrives
   useEffect(() => {
     setHasUpvoted(initialIsUpvoted);
   }, [initialIsUpvoted]);
@@ -121,120 +121,119 @@ export default function ApplicationCard({ application, isUpvoted: initialIsUpvot
   return (
     <Link 
       href={`/applications/${application.uid}`}
-      className="group relative bg-gradient-to-br from-gray-900 to-black rounded-2xl shadow-2xl hover:shadow-indigo-900/50 transition-all duration-300 overflow-hidden border border-gray-800 hover:border-indigo-500 flex flex-col backdrop-blur-sm"
+      className="group relative rounded-2xl overflow-hidden"
     >
-      {/* Gradient header with metallic effect */}
-      <div className="h-2 bg-gradient-to-r from-gray-700 via-gray-500 to-gray-700"></div>
+      <div className="relative rounded-2xl border border-gray-800 p-2 h-full">
+        <GlowingEffect
+          spread={40}
+          glow={true}
+          disabled={false}
+          proximity={64}
+          inactiveZone={0.01}
+        />
+        <div className="border-0.75 relative flex flex-col justify-between gap-6 overflow-hidden rounded-xl bg-gradient-to-br from-gray-900 to-black shadow-2xl hover:shadow-indigo-900/50 transition-all duration-300 border-gray-800 hover:border-indigo-500 backdrop-blur-sm p-6 min-h-full">
+          {/* Shimmer effect on hover */}
+          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+          </div>
 
-      {/* Shimmer effect on hover */}
-      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-      </div>
-
-      {/* Card Header with Category Badge */}
-      <div className="px-6 py-4 border-b border-gray-800 relative z-10">
-        <div className="flex items-center justify-between mb-2">
-          {application.app_category && (
-            <span className="inline-block bg-gradient-to-r from-gray-800 to-gray-700 text-gray-300 px-3 py-1 rounded-lg text-xs font-semibold border border-gray-700">
-              {application.app_category}
-            </span>
-          )}
-          {application.application_status === 'Active' && (
-            <span className="inline-block bg-green-900 text-green-300 px-3 py-1 rounded-lg text-xs font-semibold border border-green-800">
-              ✓ Active
-            </span>
-          )}
-        </div>
-      </div>
-
-      {/* Card Body */}
-      <div className="p-6 flex-1 flex flex-col relative z-10">
-        {/* Title */}
-        <h3 className="text-2xl font-bold bg-gradient-to-r from-gray-200 to-white bg-clip-text text-transparent mb-3 group-hover:text-indigo-400 transition-all">
-          {application.title}
-        </h3>
-
-        {/* Description */}
-        <p className="text-gray-400 text-sm leading-relaxed mb-4 flex-1 line-clamp-3 group-hover:text-gray-300 transition-colors">
-          {application.app_description || application.main_description?.replace(/<[^>]*>/g, '').substring(0, 150) || 'View comprehensive documentation and guides for ' + application.title}
-        </p>
-
-        {/* Tags */}
-        {application.tags && application.tags.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-4">
-            {application.tags.slice(0, 3).map((tag: string, index: number) => (
-              <span 
-                key={index}
-                className="bg-gray-800 text-gray-400 px-2 py-1 rounded text-xs border border-gray-700"
-              >
-                #{tag}
+          {/* Card Header with Category Badge */}
+          <div className="flex items-center justify-between mb-2 relative z-10">
+            {application.app_category && (
+              <span className="inline-block bg-gradient-to-r from-gray-800 to-gray-700 text-gray-300 px-3 py-1 rounded-lg text-xs font-semibold border border-gray-700">
+                {application.app_category}
               </span>
-            ))}
-            {application.tags.length > 3 && (
-              <span className="text-gray-500 text-xs self-center">
-                +{application.tags.length - 3} more
+            )}
+            {application.application_status === 'Active' && (
+              <span className="inline-block bg-green-900 text-green-300 px-3 py-1 rounded-lg text-xs font-semibold border border-green-800">
+                ✓ Active
               </span>
             )}
           </div>
-        )}
 
-        {/* Footer */}
-        <div className="pt-4 border-t border-gray-800 flex items-center justify-between">
-          <span className="text-sm text-gray-500">
-            {application.maintainer_name || 'Community'}
-          </span>
+          {/* Card Body */}
+          <div className="flex-1 flex flex-col relative z-10">
+            {/* Title */}
+            <h3 className="text-xl font-bold bg-gradient-to-r from-gray-200 to-white bg-clip-text text-transparent mb-3 group-hover:text-indigo-400 transition-all line-clamp-2">
+              {application.title}
+            </h3>
 
-          <div className="flex items-center gap-4">
-            {/* Like (only for authenticated users) */}
-            {session?.user && (
-              <button
-                onClick={handleLike}
-                disabled={isLiking || hasLiked}
-                className={`flex items-center gap-1.5 px-2 py-1 rounded-lg text-sm font-medium transition-all border border-transparent ${
-                  hasLiked
-                    ? 'bg-gray-800 text-pink-200 border-pink-500/40 cursor-default'
-                    : 'text-gray-300 hover:text-white hover:bg-gray-800 border-gray-700'
-                } ${isLiking ? 'opacity-50 cursor-wait' : ''}`}
-                title={hasLiked ? 'Added to your likes' : 'Like this application'}
-              >
-                <span className="text-lg">{hasLiked ? '❤️' : '🤍'}</span>
-                <span className={hasLiked ? 'font-semibold text-pink-100' : ''}>Like</span>
-              </button>
+            {/* Description */}
+            <p className="text-gray-400 text-sm leading-relaxed mb-4 flex-1 line-clamp-3 group-hover:text-gray-300 transition-colors">
+              {application.app_description || application.main_description?.replace(/<[^>]*>/g, '').substring(0, 150) || 'View comprehensive documentation and guides for ' + application.title}
+            </p>
+
+            {/* Tags */}
+            {application.tags && application.tags.length > 0 && (
+              <div className="flex flex-wrap gap-2 mb-4">
+                {application.tags.slice(0, 2).map((tag: string, index: number) => (
+                  <span 
+                    key={index}
+                    className="bg-gray-800 text-gray-400 px-2 py-1 rounded text-xs border border-gray-700"
+                  >
+                    #{tag}
+                  </span>
+                ))}
+                {application.tags.length > 2 && (
+                  <span className="text-gray-500 text-xs self-center">
+                    +{application.tags.length - 2} more
+                  </span>
+                )}
+              </div>
             )}
+          </div>
 
-            {/* Upvote */}
-            <button
-              onClick={handleUpvote}
-              disabled={status === 'loading' || isUpvoting || hasUpvoted}
-              className={`flex items-center gap-1.5 px-2 py-1 rounded-lg text-sm font-medium transition-all ${
-                hasUpvoted
-                  ? 'bg-gray-800 text-gray-300 cursor-default border border-gray-700'
-                  : 'text-gray-400 hover:text-gray-200 hover:bg-gray-800'
-              } ${isUpvoting ? 'opacity-50 cursor-wait' : ''}`}
-              title={hasUpvoted ? 'You already upvoted this' : 'Upvote this application'}
-            >
-              <span className={`text-lg ${hasUpvoted ? 'filter drop-shadow-sm' : ''}`}>
-                {hasUpvoted ? '👍' : '⬆️'}
-              </span>
-              <span className={hasUpvoted ? 'font-semibold' : ''}>{upvotes}</span>
-              {hasUpvoted && (
-                <span className="ml-0.5 text-xs text-gray-400 font-bold">✓</span>
+          {/* Footer */}
+          <div className="pt-4 border-t border-gray-800 flex items-center justify-between relative z-10">
+            <span className="text-xs text-gray-500 truncate">
+              {application.maintainer_name || 'Community'}
+            </span>
+
+            <div className="flex items-center gap-3">
+              {/* Like (only for authenticated users) */}
+              {session?.user && (
+                <button
+                  onClick={handleLike}
+                  disabled={isLiking || hasLiked}
+                  className={`flex items-center gap-1 px-2 py-1 rounded text-xs font-medium transition-all border border-transparent ${
+                    hasLiked
+                      ? 'bg-gray-800 text-pink-200 border-pink-500/40 cursor-default'
+                      : 'text-gray-300 hover:text-white hover:bg-gray-800 border-gray-700'
+                  } ${isLiking ? 'opacity-50 cursor-wait' : ''}`}
+                  title={hasLiked ? 'Added to your likes' : 'Like this application'}
+                >
+                  <span className="text-sm">{hasLiked ? '❤️' : '🤍'}</span>
+                </button>
               )}
-            </button>
 
-            {/* View Docs */}
-            <div className="flex items-center text-gray-300 font-semibold text-sm group-hover:translate-x-2 transition-transform group-hover:text-indigo-400">
-              View Docs
-              <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-              </svg>
+              {/* Upvote */}
+              <button
+                onClick={handleUpvote}
+                disabled={status === 'loading' || isUpvoting || hasUpvoted}
+                className={`flex items-center gap-1 px-2 py-1 rounded text-xs font-medium transition-all ${
+                  hasUpvoted
+                    ? 'bg-gray-800 text-gray-300 cursor-default border border-gray-700'
+                    : 'text-gray-400 hover:text-gray-200 hover:bg-gray-800'
+                } ${isUpvoting ? 'opacity-50 cursor-wait' : ''}`}
+                title={hasUpvoted ? 'You already upvoted this' : 'Upvote this application'}
+              >
+                <span className={`text-sm ${hasUpvoted ? 'filter drop-shadow-sm' : ''}`}>
+                  {hasUpvoted ? '👍' : '⬆️'}
+                </span>
+                <span className="text-xs">{upvotes}</span>
+              </button>
+
+              {/* View Docs */}
+              <div className="flex items-center text-gray-300 font-semibold text-xs group-hover:text-indigo-400 transition-colors">
+                →
+              </div>
             </div>
           </div>
+
+          {/* Hover Decoration with blur */}
+          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-full blur-3xl opacity-0 group-hover:opacity-30 transition-opacity duration-500"></div>
         </div>
       </div>
-
-      {/* Hover Decoration with blur */}
-      <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-full blur-3xl opacity-0 group-hover:opacity-30 transition-opacity duration-500"></div>
     </Link>
   );
 }

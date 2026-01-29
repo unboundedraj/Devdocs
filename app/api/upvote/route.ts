@@ -16,7 +16,6 @@ async function publishApplicationEntry(params: {
     throw new Error('Missing Contentstack env/api key/management token for publishing');
   }
 
-  // Publishing is required for Delivery API (what the apps page uses) to reflect updated fields.
   const publishRes = await fetch(
     `${API_BASE}/content_types/application/entries/${params.applicationUid}/publish`,
     {
@@ -61,7 +60,6 @@ export async function POST(req: Request) {
   }
 
   try {
-    // Step 1: Fetch user entry
     const userRes = await fetch(
       `${API_BASE}/content_types/users/entries?query=${encodeURIComponent(
         JSON.stringify({ email: session.user.email })

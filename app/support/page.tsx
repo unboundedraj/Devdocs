@@ -1,6 +1,85 @@
 import { getSupportPage } from '@/lib/queries';
 import SupportChannels from '@/app/support/SupportChannels';
 import SupportHeader from '@/components/support/SupportHeader';
+import { HeroParallax } from '@/components/ui/hero-parallax';
+
+const supportResources = [
+  {
+    title: "Home",
+    link: "/",
+    thumbnail: "/images/support/home.png",
+  },
+  {
+    title: "Documentation",
+    link: "/applications",
+    thumbnail: "/images/support/documentation.png",
+  },
+  {
+    title: "FAQ",
+    link: "/faqs",
+    thumbnail: "/images/support/faq.png",
+  },
+  {
+    title: "AI Chat",
+    link: "/chat",
+    thumbnail: "/images/support/chat.png",
+  },
+  {
+    title: "Support",
+    link: "/support",
+    thumbnail: "/images/support/support.png",
+  },
+  {
+    title: "API Reference",
+    link: "/applications",
+    thumbnail: "/images/support/home.png",
+  },
+  {
+    title: "Guides",
+    link: "/applications",
+    thumbnail: "/images/support/documentation.png",
+  },
+  {
+    title: "Tutorials",
+    link: "/applications",
+    thumbnail: "/images/support/faq.png",
+  },
+  {
+    title: "Contribute",
+    link: "/contribute",
+    thumbnail: "/images/support/chat.png",
+  },
+  {
+    title: "Changelog",
+    link: "/applications",
+    thumbnail: "/images/support/support.png",
+  },
+  {
+    title: "Roadmap",
+    link: "/applications",
+    thumbnail: "/images/support/home.png",
+  },
+  {
+    title: "Security",
+    link: "/support",
+    thumbnail: "/images/support/documentation.png",
+  },
+  {
+    title: "Privacy",
+    link: "/support",
+    thumbnail: "/images/support/faq.png",
+  },
+  {
+    title: "Community",
+    link: "/chat",
+    thumbnail: "/images/support/chat.png",
+  },
+  {
+    title: "Feedback",
+    link: "/contribute",
+    thumbnail: "/images/support/support.png",
+  },
+];
 
 export default async function SupportPage() {
   const supportPage = await getSupportPage();
@@ -15,7 +94,8 @@ export default async function SupportPage() {
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
-      <SupportHeader title={supportPage.title} description={supportPage.multi_line_textbox} />
+
+      <HeroParallax products={supportResources} />
 
       {/* Support Channels */}
       {supportPage.support_channels && supportPage.support_channels.length > 0 && (

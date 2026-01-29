@@ -115,11 +115,11 @@ export default function Header() {
                 </div>
 
                 {/* Contribute (authenticated) */}
-                <button
-                  onClick={handleContributeClick}
-                  className="bg-theme-accent text-white px-6 py-2.5 rounded-full font-semibold hover:from-gray-600 hover:to-gray-500 transition-all duration-300 shadow-lg hover:shadow-gray-700/50 transform hover:-translate-y-0.5 border border-gray-600"
-                >
-                  Contribute
+                <button className="relative inline-flex h-12 overflow-hidden rounded-full p-[1px] focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50">
+                  <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#E2CBFF_0%,#393BB2_50%,#E2CBFF_100%)]" />
+                  <span onClick={handleContributeClick} className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-full bg-slate-950 px-6 py-2 text-sm font-medium text-white backdrop-blur-3xl">
+                    Contribute
+                  </span>
                 </button>
               </div>
             ) : (
@@ -138,11 +138,11 @@ export default function Header() {
                 </button>
 
                 {/* Contribute (unauthenticated) */}
-                <button
-                  onClick={handleContributeClick}
-                  className="bg-gradient-to-r from-gray-700 to-gray-600 text-white px-6 py-2.5 rounded-full font-semibold hover:from-gray-600 hover:to-gray-500 transition-all duration-300 shadow-lg hover:shadow-gray-700/50 transform hover:-translate-y-0.5 border border-gray-600"
-                >
-                  Contribute
+                <button className="relative inline-flex h-12 overflow-hidden rounded-full p-[1px] focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50">
+                  <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#E2CBFF_0%,#393BB2_50%,#E2CBFF_100%)]" />
+                  <span onClick={handleContributeClick} className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-full bg-slate-950 px-6 py-2 text-sm font-medium text-white backdrop-blur-3xl">
+                    Contribute
+                  </span>
                 </button>
               </div>
             )}
@@ -187,12 +187,22 @@ export default function Header() {
                       <Link href="/profile" onClick={() => setShowMobileMenu(false)} className="block px-3 py-2 text-sm text-gray-300 hover:bg-gray-800 hover:text-white rounded">Profile</Link>
                       <button onClick={() => { setShowMobileMenu(false); signOut(); }} className="w-full text-left px-3 py-2 text-sm text-red-400 hover:bg-red-950 hover:text-red-300 rounded">Sign Out</button>
                     </div>
-                    <button onClick={() => { setShowMobileMenu(false); handleContributeClick(); }} className="w-full mt-2 bg-theme-accent text-white px-4 py-2 rounded-full font-semibold">Contribute</button>
+                    <button className="w-full mt-2 relative inline-flex h-10 overflow-hidden rounded-full p-[1px] focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50">
+                      <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#E2CBFF_0%,#393BB2_50%,#E2CBFF_100%)]" />
+                      <span onClick={() => { setShowMobileMenu(false); handleContributeClick(); }} className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-full bg-slate-950 px-4 py-1 text-sm font-medium text-white backdrop-blur-3xl">
+                        Contribute
+                      </span>
+                    </button>
                   </div>
                 ) : (
                   <div className="space-y-2">
                     <button onClick={() => { setShowMobileMenu(false); signIn('google'); }} className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-gray-900 to-gray-800 border border-gray-700 text-white px-4 py-2 rounded-lg font-semibold">Sign in with Google</button>
-                    <button onClick={() => { setShowMobileMenu(false); handleContributeClick(); }} className="w-full bg-gradient-to-r from-gray-700 to-gray-600 text-white px-4 py-2 rounded-full font-semibold">Contribute</button>
+                    <button className="w-full relative inline-flex h-10 overflow-hidden rounded-full p-[1px] focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50">
+                      <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#E2CBFF_0%,#393BB2_50%,#E2CBFF_100%)]" />
+                      <span onClick={() => { setShowMobileMenu(false); handleContributeClick(); }} className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-full bg-slate-950 px-4 py-1 text-sm font-medium text-white backdrop-blur-3xl">
+                        Contribute
+                      </span>
+                    </button>
                   </div>
                 )}
               </div>

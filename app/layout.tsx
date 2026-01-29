@@ -26,7 +26,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Fetch theme settings
   const theme = await getThemeSettings();
   
   // Extract hex values from color picker objects

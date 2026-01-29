@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { Vortex } from '@/components/ui/vortex';
 
 interface Message {
   id: string;
@@ -120,84 +121,14 @@ export default function ChatPage() {
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[var(--color-secondary)] rounded-full opacity-10 blur-3xl animate-float-delayed"></div>
       </div>
 
-      {/* Header */}
-      <div className="relative bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-32 px-6 shadow-sm overflow-hidden">
-        {/* Particle Background Canvas */}
-        <canvas
-          ref={(canvas) => {
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            if (!ctx) return;
+      {/* Fixed Vortex Background */}
+      <div className="fixed inset-0 z-0">
+        <Vortex backgroundColor="black" containerClassName="w-full h-full" className="w-full h-full" />
+      </div>
 
-            canvas.width = canvas.offsetWidth;
-            canvas.height = canvas.offsetHeight;
-
-            const particles: any[] = [];
-            const particleCount = 40;
-
-            class Particle {
-              x: number;
-              y: number;
-              size: number;
-              speedX: number;
-              speedY: number;
-
-              constructor() {
-                this.x = Math.random() * canvas!.width;
-                this.y = Math.random() * canvas!.height;
-                this.size = Math.random() * 1.5 + 0.5;
-                this.speedX = (Math.random() - 0.5) * 0.7;
-                this.speedY = (Math.random() - 0.5) * 0.7;
-              }
-
-              update() {
-                this.x += this.speedX;
-                this.y += this.speedY;
-
-                if (this.x > canvas!.width) this.x = 0;
-                if (this.x < 0) this.x = canvas!.width;
-                if (this.y > canvas!.height) this.y = 0;
-                if (this.y < 0) this.y = canvas!.height;
-              }
-
-              draw() {
-                ctx!.fillStyle = 'rgba(255, 255, 255, 0.5)';
-                ctx!.beginPath();
-                ctx!.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx!.fill();
-              }
-            }
-
-            for (let i = 0; i < particleCount; i++) {
-              particles.push(new Particle());
-            }
-
-            let animationFrameId: number;
-            const animate = () => {
-              ctx!.clearRect(0, 0, canvas!.width, canvas!.height);
-              particles.forEach((particle) => {
-                particle.update();
-                particle.draw();
-              });
-              animationFrameId = requestAnimationFrame(animate);
-            };
-
-            animate();
-
-            return () => {
-              if (animationFrameId) {
-                cancelAnimationFrame(animationFrameId);
-              }
-            };
-          }}
-          className="absolute inset-0 w-full h-full pointer-events-none"
-        />
-
-        {/* Blur accent on edges */}
-        <div className="absolute -top-10 -right-10 w-40 h-40 bg-white opacity-20 rounded-full blur-2xl" />
-        <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-white opacity-10 rounded-full blur-2xl" />
-
-        <div className="max-w-4xl mx-auto relative z-10 text-center">
+      {/* Header - Scrollable Content */}
+      <div className="relative z-10 py-32 px-6">
+        <div className="max-w-4xl mx-auto text-center">
           <div className="flex flex-col items-center gap-4">
             <div className="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg border border-white/30 flex-shrink-0">
               <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -9,7 +9,7 @@ export default function SupportHeader({ title, description }: SupportHeaderProps
   return (
     <>
       {/* Page Header */}
-      <section className="relative bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 text-white py-32 px-6 overflow-hidden">
+      <section className="relative bg-black text-white py-32 px-6 overflow-hidden">
         {/* Particle Background Canvas */}
         <canvas
           ref={(canvas) => {
@@ -49,7 +49,7 @@ export default function SupportHeader({ title, description }: SupportHeaderProps
               }
 
               draw() {
-                ctx!.fillStyle = 'rgba(255, 255, 255, 0.5)';
+                ctx!.fillStyle = 'rgba(156, 163, 175, 0.4)';
                 ctx!.beginPath();
                 ctx!.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                 ctx!.fill();
@@ -82,8 +82,8 @@ export default function SupportHeader({ title, description }: SupportHeaderProps
         />
 
         {/* Blur accent on edges */}
-        <div className="absolute -top-10 -right-10 w-40 h-40 bg-white opacity-20 rounded-full blur-2xl" />
-        <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-white opacity-10 rounded-full blur-2xl" />
+        <div className="absolute -top-10 -right-10 w-40 h-40 bg-gray-700 opacity-20 rounded-full blur-2xl" />
+        <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-gray-700 opacity-10 rounded-full blur-2xl" />
 
         <div className="max-w-5xl mx-auto text-center relative z-10">
           <div className="inline-block mb-4 px-3 py-1 bg-white/20 rounded-lg text-sm font-medium backdrop-blur-sm">
