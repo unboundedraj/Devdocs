@@ -1,15 +1,7 @@
 import { getAllApplications } from '@/lib/queries';
-import { setLivePreviewQueryParams } from '@/lib/utils';
 import ApplicationsContent from '@/components/applications/ApplicationsContent';
 
-export default async function ApplicationsPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}) {
-  const params = await searchParams;
-  setLivePreviewQueryParams(params);
-  
+export default async function ApplicationsPage() {
   const applications = await getAllApplications();
 
   return (

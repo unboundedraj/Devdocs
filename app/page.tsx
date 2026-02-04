@@ -1,19 +1,75 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import { getHomepageByQuery } from '@/lib/queries';
-import { setLivePreviewQueryParams } from '@/lib/utils';
 import HeroSection from '@/components/homepage/HeroSection';
 import ValuePropositions from '@/components/homepage/ValuePropositions';
 import FeaturedApplications from '@/components/homepage/FeaturedApplications';
 import ContributionCTA from '@/components/homepage/ContributionCTA';
+import ContentstackLivePreview from '@contentstack/live-preview-utils';
+import Stack from '@/lib/contentstack';
 
-export default async function HomePage({
-  searchParams,
-}: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}) {
-  const params = await searchParams;
-  setLivePreviewQueryParams(params);
-  
-  const homepage = await getHomepageByQuery();
+export default function HomePage() {
+  const [homepage, setHomepage] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Initialize live preview
+    ContentstackLivePreview.init({
+      enable: true,
+      ssr: false,
+      stackSdk: Stack,
+      stackDetails: {
+        apiKey: process.env.NEXT_PUBLIC_CONTENTSTACK_API_KEY!,
+        environment: process.env.NEXT_PUBLIC_CONTENTSTACK_ENVIRONMENT!,
+      },
+      clientUrlParams: {
+        protocol: 'https',
+        host: process.env.NEXT_PUBLIC_CONTENTSTACK_APP_HOST || 'app.contentstack.com',
+        port: 443,
+      },
+    });
+
+    // Fetch homepage data
+    async function fetchData() {
+      try {
+        setLoading(true);
+        const data = await getHomepageByQuery();
+        setHomepage(data);
+      } catch (err) {
+        console.error('Error fetching homepage:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    // Initial fetch
+    fetchData();
+
+    // Listen for live preview changes and refetch
+    const unsubscribe = ContentstackLivePreview.onEntryChange(() => {
+      console.log('Homepage entry changed in live preview - refetching...');
+      fetchData();
+    });
+
+    // Cleanup
+    return () => {
+      if (unsubscribe && typeof unsubscribe === 'function') {
+        unsubscribe();
+      }
+    };
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 to-blue-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+          <p className="text-indigo-600 font-semibold">Loading homepage...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!homepage) {
     return (
@@ -35,10 +91,12 @@ export default async function HomePage({
       <HeroSection 
         title={homepage.title}
         description={homepage.hero_description}
+        entry_uid={homepage.uid}
       />
 
       <ValuePropositions 
         propositions={homepage.value_propositions}
+        entry_uid={homepage.uid}
       />
 
       <ContributionCTA

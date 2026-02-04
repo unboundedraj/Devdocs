@@ -2,27 +2,27 @@
 
 import { useEffect } from 'react';
 import ContentstackLivePreview from '@contentstack/live-preview-utils';
+import Stack from '@/lib/contentstack';
 
 export default function LivePreviewProvider() {
   useEffect(() => {
+    // Initialize live preview globally for all pages
     ContentstackLivePreview.init({
-      enable: process.env.NEXT_PUBLIC_CONTENTSTACK_ENVIRONMENT !== 'production',
-      cleanCslpOnProduction: process.env.NEXT_PUBLIC_CONTENTSTACK_ENVIRONMENT === 'production',
-      ssr: true,
+      enable: true,
+      ssr: false,
+      stackSdk: Stack,
+      editButton: {
+        enable: true,
+      },
       stackDetails: {
         apiKey: process.env.NEXT_PUBLIC_CONTENTSTACK_API_KEY!,
         environment: process.env.NEXT_PUBLIC_CONTENTSTACK_ENVIRONMENT!,
       },
       clientUrlParams: {
-        host: 'app.contentstack.com', // AWS NA region
+        protocol: 'https',
+        host: process.env.NEXT_PUBLIC_CONTENTSTACK_APP_HOST || 'app.contentstack.com',
+        port: 443,
       },
-      editButton: {
-        enable: true,
-        exclude: ['outsideLivePreviewPortal'],
-        includeByQueryParameter: true,
-        position: 'top-right',
-      },
-      debug: process.env.NEXT_PUBLIC_CONTENTSTACK_ENVIRONMENT !== 'production',
     });
   }, []);
 

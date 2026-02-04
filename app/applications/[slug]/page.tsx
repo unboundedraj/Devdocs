@@ -1,20 +1,57 @@
+"use client";
+import { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
+import { Application } from '@/types/application';
 import { getAllApplications } from '@/lib/queries';
-import { setLivePreviewQueryParams } from '@/lib/utils';
+import ContentstackLivePreview from '@contentstack/live-preview-utils';
 import Link from 'next/link';
 
-export default async function ApplicationDetailPage({
-  params,
-  searchParams,
-}: {
-  params: Promise<{ slug: string }>;
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}) {
-  const { slug } = await params;
-  const urlParams = await searchParams;
-  setLivePreviewQueryParams(urlParams);
-  
-  const applications = await getAllApplications();
-  const application = applications.find(app => app.uid === slug);
+export default function ApplicationDetailPage() {
+  const params = useParams();
+  const slug = params.slug as string;
+  const [application, setApplication] = useState<Application | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchApplication() {
+      try {
+        setLoading(true);
+        const applications = await getAllApplications();
+        const app = applications.find(app => app.uid === slug);
+        setApplication(app || null);
+      } catch (error) {
+        console.error('Error fetching application:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    
+    // Initial fetch
+    fetchApplication();
+
+    // Listen for live preview changes and refetch
+    const unsubscribe = ContentstackLivePreview.onEntryChange(() => {
+      console.log('Application entry changed in live preview - refetching...');
+      fetchApplication();
+    });
+
+    return () => {
+      if (unsubscribe && typeof unsubscribe === 'function') {
+        unsubscribe();
+      }
+    };
+  }, [slug]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading application...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!application) {
     return (
@@ -53,22 +90,34 @@ export default async function ApplicationDetailPage({
         <div className="max-w-5xl mx-auto">
           <div className="flex items-start justify-between mb-6">
             <div>
-              <h1 className="text-4xl font-bold text-gray-900 mb-2">
+              <h1 
+                className="text-4xl font-bold text-gray-900 mb-2"
+                data-cslp={`application.${application.uid}.title`}
+              >
                 {application.title}
               </h1>
-              <p className="text-gray-600">
+              <p 
+                className="text-gray-600"
+                data-cslp={`application.${application.uid}.maintainer_name`}
+              >
                 by {application.maintainer_name || 'Unknown'}
               </p>
             </div>
             
             <div className="flex gap-2">
               {application.app_category && (
-                <span className="bg-indigo-100 text-indigo-700 px-4 py-2 rounded-lg text-sm font-medium">
+                <span 
+                  className="bg-indigo-100 text-indigo-700 px-4 py-2 rounded-lg text-sm font-medium"
+                  data-cslp={`application.${application.uid}.app_category`}
+                >
                   {application.app_category}
                 </span>
               )}
               {application.application_status && (
-                <span className="bg-green-100 text-green-700 px-4 py-2 rounded-lg text-sm font-medium">
+                <span 
+                  className="bg-green-100 text-green-700 px-4 py-2 rounded-lg text-sm font-medium"
+                  data-cslp={`application.${application.uid}.application_status`}
+                >
                   {application.application_status}
                 </span>
               )}
@@ -82,6 +131,7 @@ export default async function ApplicationDetailPage({
                 <span 
                   key={index}
                   className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs"
+                  data-cslp={`application.${application.uid}.tags.${index}`}
                 >
                   #{tag}
                 </span>
@@ -99,6 +149,7 @@ export default async function ApplicationDetailPage({
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-indigo-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-indigo-700 transition-colors inline-flex items-center"
+                data-cslp={`application.${application.uid}.url`}
               >
                 Visit Website
                 <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -124,6 +175,7 @@ export default async function ApplicationDetailPage({
       <div 
         className="rich-text text-gray-700"
         dangerouslySetInnerHTML={{ __html: application.main_description }}
+        data-cslp={`application.${application.uid}.main_description`}
       />
     </div>
   </section>
@@ -140,11 +192,18 @@ export default async function ApplicationDetailPage({
                 <div 
                   key={index}
                   className="bg-gray-50 rounded-lg p-6 border border-gray-200"
+                  data-cslp={`application.${application.uid}.app_key_features.${index}`}
                 >
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                  <h3 
+                    className="text-lg font-semibold text-gray-900 mb-3"
+                    data-cslp={`application.${application.uid}.app_key_features.${index}.app_key_feature_title`}
+                  >
                     {feature.app_key_feature_title}
                   </h3>
-                  <p className="text-gray-600 text-sm leading-relaxed">
+                  <p 
+                    className="text-gray-600 text-sm leading-relaxed"
+                    data-cslp={`application.${application.uid}.app_key_features.${index}.app_key_features_description`}
+                  >
                     {feature.app_key_features_description}
                   </p>
                 </div>
@@ -161,6 +220,7 @@ export default async function ApplicationDetailPage({
       <h2 className="text-2xl font-bold text-gray-900 mb-6">Getting Started</h2>
       <div 
         className="rich-text text-gray-700"
+        data-cslp={`application.${application.uid}.getting_started`}
         dangerouslySetInnerHTML={{ __html: application.getting_started }}
       />
     </div>

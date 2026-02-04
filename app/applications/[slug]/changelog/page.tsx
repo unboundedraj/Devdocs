@@ -1,18 +1,13 @@
 import { getAllApplications, getChangelogsByApplicationUid } from '@/lib/queries';
-import { setLivePreviewQueryParams } from '@/lib/utils';
 import Link from 'next/link';
 import ChangelogList from '@/components/changelog/ChangelogList';
 
 export default async function ChangelogPage({
   params,
-  searchParams,
 }: {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const { slug } = await params;
-  const urlParams = await searchParams;
-  setLivePreviewQueryParams(urlParams);
   
   // Get the application
   const applications = await getAllApplications();

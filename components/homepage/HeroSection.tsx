@@ -4,9 +4,10 @@ import { useEffect, useRef } from 'react';
 interface HeroSectionProps {
   title: string;
   description: string;
+  entry_uid?: string; // Add entry UID for data-cslp
 }
 
-export default function HeroSection({ title, description }: HeroSectionProps) {
+export default function HeroSection({ title, description, entry_uid }: HeroSectionProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -110,14 +111,20 @@ export default function HeroSection({ title, description }: HeroSectionProps) {
         </div>
 
         {/* Title */}
-        <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
+        <h1 
+          className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight"
+          data-cslp={entry_uid ? `homepage.${entry_uid}.title` : undefined}
+        >
           <span className="bg-gradient-to-r from-white via-gray-200 to-gray-300 bg-clip-text text-transparent drop-shadow-2xl">
             {title}
           </span>
         </h1>
 
         {/* Description */}
-        <p className="text-lg md:text-xl lg:text-2xl mb-10 text-gray-300 max-w-3xl mx-auto leading-relaxed font-light">
+        <p 
+          className="text-lg md:text-xl lg:text-2xl mb-10 text-gray-300 max-w-3xl mx-auto leading-relaxed font-light"
+          data-cslp={entry_uid ? `homepage.${entry_uid}.hero_description` : undefined}
+        >
           {description}
         </p>
 

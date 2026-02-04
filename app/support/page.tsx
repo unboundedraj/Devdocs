@@ -1,5 +1,4 @@
 import { getSupportPage } from '@/lib/queries';
-import { setLivePreviewQueryParams } from '@/lib/utils';
 import SupportChannels from '@/app/support/SupportChannels';
 import SupportHeader from '@/components/support/SupportHeader';
 import { HeroParallax } from '@/components/ui/hero-parallax';
@@ -82,13 +81,7 @@ const supportResources = [
   },
 ];
 
-export default async function SupportPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}) {
-  const params = await searchParams;
-  setLivePreviewQueryParams(params);
+export default async function SupportPage() {
   
   const supportPage = await getSupportPage();
 
