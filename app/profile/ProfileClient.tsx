@@ -1,6 +1,8 @@
 'use client';
 
 import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
 type AppRef = {
@@ -16,6 +18,63 @@ type Profile = {
 
 export default function ProfileClient({ profile }: { profile: Profile }) {
   const { data: session, status } = useSession();
+  const router = useRouter();
+  const [upvotedApps, setUpvotedApps] = useState<AppRef[]>(profile?.upvoted_applications ?? []);
+  const [likedApps, setLikedApps] = useState<AppRef[]>(profile?.liked_applications ?? []);
+
+  // Fetch liked applications from API
+  useEffect(() => {
+    if (!session?.user) return;
+
+    const fetchLikedApps = async () => {
+      try {
+        const res = await fetch('/api/user/liked');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.likedApplications && Array.isArray(data.likedApplications)) {
+            setLikedApps(data.likedApplications);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch liked applications:', error);
+      }
+    };
+
+    fetchLikedApps();
+  }, [session?.user]);
+
+  // Fetch upvoted applications from API
+  useEffect(() => {
+    if (!session?.user) return;
+
+    const fetchUpvotedApps = async () => {
+      try {
+        const res = await fetch('/api/user/upvoted');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.upvotedApplications && Array.isArray(data.upvotedApplications)) {
+            setUpvotedApps(data.upvotedApplications);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch upvoted applications:', error);
+      }
+    };
+
+    fetchUpvotedApps();
+  }, [session?.user]);
+
+  // Refresh profile data when page becomes visible (e.g., after navigating back)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        router.refresh();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [router]);
 
   if (status === 'loading') {
     return (
@@ -24,9 +83,6 @@ export default function ProfileClient({ profile }: { profile: Profile }) {
       </div>
     );
   }
-
-  const upvotedApps = profile?.upvoted_applications ?? [];
-  const likedApps = profile?.liked_applications ?? [];
 
   return (
     <div className="min-h-screen bg-theme-background">
@@ -46,6 +102,17 @@ export default function ProfileClient({ profile }: { profile: Profile }) {
               </h1>
               <p className="text-theme-secondary text-lg">{session?.user?.email}</p>
             </div>
+
+            <button
+              onClick={() => router.refresh()}
+              className="px-4 py-2 bg-theme-primary text-white rounded-lg font-medium hover:shadow-lg transition-all duration-300 hover:scale-105 flex items-center gap-2"
+              title="Refresh profile data"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              Refresh
+            </button>
           </div>
         </div>
 

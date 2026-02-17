@@ -1,46 +1,47 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-
-const API_BASE = 'https://api.contentstack.io/v3';
+import { findUserByEmail, getApplicationByUid } from '@/lib/contentstack-management-queries';
 
 export async function GET() {
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.email) {
-    return NextResponse.json({ likedApplicationUids: [] }, { status: 200 });
+    return NextResponse.json({ likedApplicationUids: [], likedApplications: [] }, { status: 200 });
   }
 
   try {
-    const userRes = await fetch(
-      `${API_BASE}/content_types/users/entries?query=${encodeURIComponent(
-        JSON.stringify({ email: session.user.email })
-      )}`,
-      {
-        headers: {
-          api_key: process.env.NEXT_PUBLIC_CONTENTSTACK_API_KEY!,
-          authorization: process.env.CONTENTSTACK_MANAGEMENT_TOKEN!,
-        },
-      }
-    );
-
-    if (!userRes.ok) {
-      return NextResponse.json({ likedApplicationUids: [] }, { status: 200 });
-    }
-
-    const userJson = await userRes.json();
-    const user = userJson.entries?.[0];
+    const user = await findUserByEmail(session.user.email);
 
     if (!user) {
-      return NextResponse.json({ likedApplicationUids: [] }, { status: 200 });
+      return NextResponse.json({ likedApplicationUids: [], likedApplications: [] }, { status: 200 });
     }
 
     const likedApps = user.liked_applications || [];
     const likedUids = likedApps.map((app: any) => app.uid).filter(Boolean);
 
-    return NextResponse.json({ likedApplicationUids: likedUids }, { status: 200 });
+    // Fetch full application details to get titles
+    const likedApplicationsWithTitles = await Promise.all(
+      likedUids.map(async (uid: string) => {
+        try {
+          const app = await getApplicationByUid(uid);
+          return {
+            uid: uid,
+            title: app?.title || uid,
+          };
+        } catch (error) {
+          console.error(`Error fetching application ${uid}:`, error);
+          return { uid: uid, title: uid };
+        }
+      })
+    );
+
+    return NextResponse.json({ 
+      likedApplicationUids: likedUids,
+      likedApplications: likedApplicationsWithTitles,
+    }, { status: 200 });
   } catch (error) {
     console.error('Error fetching liked applications:', error);
-    return NextResponse.json({ likedApplicationUids: [] }, { status: 200 });
+    return NextResponse.json({ likedApplicationUids: [], likedApplications: [] }, { status: 200 });
   }
 }

@@ -1,30 +1,25 @@
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import ProfileClient from './ProfileClient';
-
-const API_BASE = 'https://api.contentstack.io/v3';
+import DeliveryStack from '@/lib/contentstack';
 
 async function getUserProfile(email: string) {
-  const query = encodeURIComponent(JSON.stringify({ email }));
+  try {
+    const response = await DeliveryStack.ContentType('users')
+      .Query()
+      .where('email', email)
+      .includeReference(['upvoted_applications', 'liked_applications'])
+      .toJSON()
+      .find();
 
-  const res = await fetch(
-    `${API_BASE}/content_types/users/entries?query=${query}&include[]=upvoted_applications&include[]=liked_applications`,
-    {
-      headers: {
-        api_key: process.env.NEXT_PUBLIC_CONTENTSTACK_API_KEY!,
-        authorization: process.env.CONTENTSTACK_MANAGEMENT_TOKEN!,
-      },
-      cache: 'no-store',
+    if (response?.[0] && response[0].length > 0) {
+      return response[0][0];
     }
-  );
-
-  if (!res.ok) {
-    console.error('Failed to fetch user profile');
+    return null;
+  } catch (error) {
+    console.error('Failed to fetch user profile:', error);
     return null;
   }
-
-  const data = await res.json();
-  return data.entries?.[0] || null;
 }
 
 

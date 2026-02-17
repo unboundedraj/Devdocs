@@ -10,6 +10,8 @@ export async function getThemeSettings(): Promise<ThemeSettings | null> {
   try {
     const response = await Stack.ContentType('theme_settings')
       .Query()
+      .includeContentType()
+      .includeFallback()
       .toJSON()
       .findOne();
     
@@ -38,8 +40,10 @@ export async function getHomepageByQuery(): Promise<Homepage | null> {
   try {
     const response = await Stack.ContentType('homepage')
       .Query()
-.includeReference(['featured_applications'])
-.includeReferenceContentTypeUID()
+      .includeReference(['featured_applications'])
+      .includeReferenceContentTypeUID()
+      .includeContentType()
+      .includeFallback()
       .toJSON()
       .findOne();
 
@@ -55,6 +59,8 @@ export async function getAllApplications(): Promise<Application[]> {
   try {
     const response = await Stack.ContentType('application')
       .Query()
+      .includeContentType()
+      .includeFallback()
       .toJSON()
       .find();
 
@@ -94,6 +100,8 @@ export async function getApplicationByUid(uid: string): Promise<Application | nu
   try {
     const response = await Stack.ContentType('application')
       .Entry(uid)
+      .includeContentType()
+      .includeFallback()
       .toJSON()
       .fetch();
 
@@ -122,6 +130,8 @@ export async function getSupportPage(): Promise<Supportpage | null> {
   try {
     const response = await Stack.ContentType('supportpage')
       .Query()
+      .includeContentType()
+      .includeFallback()
       .toJSON()
       .findOne();
 
@@ -136,6 +146,8 @@ export async function getChangelogsByApplicationUid(applicationUid: string): Pro
   try {
     const response = await Stack.ContentType('changelog')
       .Query()
+      .includeContentType()
+      .includeFallback()
       .toJSON()
       .find();
 
@@ -166,6 +178,8 @@ export const getFAQs = async () => {
       .Query()
       .where('is_active', true)
       .ascending('order')
+      .includeContentType()
+      .includeFallback()
       .toJSON()
 
     const result = await Query.find()

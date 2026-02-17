@@ -1,12 +1,14 @@
 'use client';
 import { useEffect, useRef } from 'react';
+import { getEditTags } from '@/lib/utils';
 
 interface HeroSectionProps {
+  entry?: any;
   title: string;
   description: string;
 }
 
-export default function HeroSection({ title, description }: HeroSectionProps) {
+export default function HeroSection({ entry, title, description }: HeroSectionProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -110,14 +112,20 @@ export default function HeroSection({ title, description }: HeroSectionProps) {
         </div>
 
         {/* Title */}
-        <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
+        <h1 
+          className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight"
+          {...getEditTags(entry, 'title')}
+        >
           <span className="bg-gradient-to-r from-white via-gray-200 to-gray-300 bg-clip-text text-transparent drop-shadow-2xl">
             {title}
           </span>
         </h1>
 
         {/* Description */}
-        <p className="text-lg md:text-xl lg:text-2xl mb-10 text-gray-300 max-w-3xl mx-auto leading-relaxed font-light">
+        <p 
+          className="text-lg md:text-xl lg:text-2xl mb-10 text-gray-300 max-w-3xl mx-auto leading-relaxed font-light"
+          {...getEditTags(entry, 'hero_description')}
+        >
           {description}
         </p>
 
@@ -128,7 +136,7 @@ export default function HeroSection({ title, description }: HeroSectionProps) {
             className="group bg-white text-gray-900 px-8 py-4 rounded-xl font-bold text-base md:text-lg hover:bg-gray-100 transition-all duration-300 shadow-2xl hover:shadow-gray-500/20 hover:scale-105 hover:-translate-y-1"
           >
             <span className="flex items-center gap-2">
-              📚 Browse Documentation
+              Browse Documentation
               <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>

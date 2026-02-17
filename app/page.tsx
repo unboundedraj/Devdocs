@@ -33,6 +33,7 @@ export default async function HomePage({
   return (
     <main className="min-h-screen">
       <HeroSection 
+        entry={homepage}
         title={homepage.title}
         description={homepage.hero_description}
       />

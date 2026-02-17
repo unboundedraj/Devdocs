@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { Vortex } from '@/components/ui/vortex';
+import ReactMarkdown from 'react-markdown';
 
 interface Message {
   id: string;
@@ -93,7 +94,7 @@ export default function ChatPage() {
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: '❌ Sorry, I encountered an error. Please try again or contact support if the issue persists.',
+        content: 'Sorry, I encountered an error. Please try again or contact support if the issue persists.',
         timestamp: new Date()
       };
       setMessages(prev => [...prev, errorMessage]);
@@ -182,7 +183,10 @@ export default function ChatPage() {
                     ? 'bg-theme-secondary text-white'
                     : 'bg-theme-card text-theme-secondary border border-theme'
                 }`}>
-                  <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
+                  <div className="text-sm leading-relaxed whitespace-pre-wrap">
+                    <ReactMarkdown>{message.content}</ReactMarkdown>
+                  </div>
+                  
                   <span className={`text-xs mt-2 block ${
                     message.role === 'user' ? 'text-white opacity-75' : 'text-theme-secondary'
                   }`}>

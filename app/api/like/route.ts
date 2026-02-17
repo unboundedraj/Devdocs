@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-
-const API_BASE = 'https://api.contentstack.io/v3';
+import { findUserByEmail, addLikedApplication, publishEntry } from '@/lib/contentstack-management-queries';
 
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
@@ -25,31 +24,10 @@ export async function POST(req: Request) {
 
   try {
     // Fetch user entry
-    const userRes = await fetch(
-      `${API_BASE}/content_types/users/entries?query=${encodeURIComponent(
-        JSON.stringify({ email: session.user.email })
-      )}`,
-      {
-        headers: {
-          api_key: process.env.NEXT_PUBLIC_CONTENTSTACK_API_KEY!,
-          authorization: process.env.CONTENTSTACK_MANAGEMENT_TOKEN!,
-        },
-      }
-    );
-
-    if (!userRes.ok) {
-      const details = await userRes.text();
-      console.error('Failed to fetch user entry:', details);
-      return NextResponse.json(
-        { error: 'Failed to fetch user' },
-        { status: 502 }
-      );
-    }
-
-    const userJson = await userRes.json();
-    const user = userJson.entries?.[0];
+    const user = await findUserByEmail(session.user.email);
 
     if (!user) {
+      console.error('User not found for email:', session.user.email);
       return NextResponse.json(
         { error: 'User not found' },
         { status: 404 }
@@ -63,45 +41,34 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: true, alreadyLiked: true });
     }
 
-    // Update user liked_applications
-    const updateUserRes = await fetch(
-      `${API_BASE}/content_types/users/entries/${user.uid}`,
-      {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          api_key: process.env.NEXT_PUBLIC_CONTENTSTACK_API_KEY!,
-          authorization: process.env.CONTENTSTACK_MANAGEMENT_TOKEN!,
-        },
-        body: JSON.stringify({
-          entry: {
-            liked_applications: [
-              ...likedApps.map((a: any) => ({
-                uid: a.uid,
-                _content_type_uid: 'application',
-              })),
-              {
-                uid: applicationUid,
-                _content_type_uid: 'application',
-              },
-            ],
-          },
-        }),
-      }
-    );
+    // Add to liked applications
+    await addLikedApplication(user.uid, applicationUid);
 
-    if (!updateUserRes.ok) {
-      const details = await updateUserRes.text();
-      console.error('Failed to update user liked_applications:', details);
-      return NextResponse.json(
-        { error: 'Failed to update user likes' },
-        { status: 502 }
-      );
+    // Publish the user entry to make changes visible
+    console.log('Attempting to publish user entry:', user.uid);
+    console.log('Environment:', process.env.NEXT_PUBLIC_CONTENTSTACK_ENVIRONMENT);
+    try {
+      const published = await publishEntry({
+        contentTypeUid: 'users',
+        entryUid: user.uid,
+        environments: [process.env.NEXT_PUBLIC_CONTENTSTACK_ENVIRONMENT!],
+        locales: ['en-us'],
+      });
+      console.log('✓ User entry published successfully:', published);
+    } catch (publishError) {
+      console.error('✗ Failed to publish user entry after like:');
+      console.error('Error details:', publishError);
+      console.error('Error message:', publishError instanceof Error ? publishError.message : 'Unknown');
+      // Non-critical - user update succeeded
     }
 
     return NextResponse.json({ success: true, alreadyLiked: false });
   } catch (error) {
-    console.error('Like failed:', error);
+    console.error('Like failed - Error details:', {
+      error,
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+    });
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

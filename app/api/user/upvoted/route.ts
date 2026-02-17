@@ -1,45 +1,24 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-
-const API_BASE = 'https://api.contentstack.io/v3';
+import { findUserByEmail, getApplicationByUid } from '@/lib/contentstack-management-queries';
 
 export async function GET() {
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.email) {
     return NextResponse.json(
-      { upvotedApplicationUids: [] },
+      { upvotedApplicationUids: [], upvotedApplications: [] },
       { status: 200 }
     );
   }
 
   try {
-    const userRes = await fetch(
-      `${API_BASE}/content_types/users/entries?query=${encodeURIComponent(
-        JSON.stringify({ email: session.user.email })
-      )}`,
-      {
-        headers: {
-          api_key: process.env.NEXT_PUBLIC_CONTENTSTACK_API_KEY!,
-          authorization: process.env.CONTENTSTACK_MANAGEMENT_TOKEN!,
-        },
-      }
-    );
-
-    if (!userRes.ok) {
-      return NextResponse.json(
-        { upvotedApplicationUids: [] },
-        { status: 200 }
-      );
-    }
-
-    const userJson = await userRes.json();
-    const user = userJson.entries?.[0];
+    const user = await findUserByEmail(session.user.email);
 
     if (!user) {
       return NextResponse.json(
-        { upvotedApplicationUids: [] },
+        { upvotedApplicationUids: [], upvotedApplications: [] },
         { status: 200 }
       );
     }
@@ -47,13 +26,30 @@ export async function GET() {
     const upvotedApps = user.upvoted_applications || [];
     const upvotedUids = upvotedApps.map((app: any) => app.uid).filter(Boolean);
 
+    // Fetch full application details to get titles
+    const upvotedApplicationsWithTitles = await Promise.all(
+      upvotedUids.map(async (uid: string) => {
+        try {
+          const app = await getApplicationByUid(uid);
+          return {
+            uid: uid,
+            title: app?.title || uid,
+          };
+        } catch (error) {
+          console.error(`Error fetching application ${uid}:`, error);
+          return { uid: uid, title: uid };
+        }
+      })
+    );
+
     return NextResponse.json({
       upvotedApplicationUids: upvotedUids,
+      upvotedApplications: upvotedApplicationsWithTitles,
     });
   } catch (error) {
     console.error('Error fetching upvoted applications:', error);
     return NextResponse.json(
-      { upvotedApplicationUids: [] },
+      { upvotedApplicationUids: [], upvotedApplications: [] },
       { status: 200 }
     );
   }
