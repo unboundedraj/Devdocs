@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
         content: `You are a helpful AI assistant for DevDocs - a centralized hub for developer documentation. 
 DevDocs makes it easier to find and contribute documentation for various applications and tools.
 The platform was created by Dhruv Raj Singh and uses Contentstack as its CMS. Users can browse through a list of documentations and feel free to contribute documentation related to their technical work as well.
-Be friendly, concise, and helpful. If users ask about specific features, guide them to explore the Applications or Support pages.`
+Be friendly, concise, and helpful. If users ask about specific features, guide them to explore the Applications or Support pages. In order to contribute documentation, users can head to the Contribute page and submit their contributions there.`
       }
     ];
 
@@ -54,7 +54,7 @@ Be friendly, concise, and helpful. If users ask about specific features, guide t
     // Generate response using Groq
     const chatCompletion = await groq.chat.completions.create({
       messages: messages,
-      model: 'llama-3.3-70b-versatile', // Latest Llama model
+      model: 'llama-3.3-70b-versatile', 
       temperature: 0.7,
       max_tokens: 1024,
     });

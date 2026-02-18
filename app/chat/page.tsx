@@ -93,7 +93,7 @@ export default function ChatPage() {
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: '❌ Sorry, I encountered an error. Please try again or contact support if the issue persists.',
+        content: 'Sorry, I encountered an error. Please try again or contact support if the issue persists.',
         timestamp: new Date()
       };
       setMessages(prev => [...prev, errorMessage]);

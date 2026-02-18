@@ -1,6 +1,6 @@
 import { NextAuthOptions } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
-import { findOrCreateUser } from '@/lib/contentstack-users';
+import { findOrCreateUser } from '@/lib/contentstack-management-queries';
 
 export const authOptions: NextAuthOptions = {
   providers: [
