@@ -44,23 +44,13 @@ export async function POST(req: Request) {
     // Add to liked applications
     await addLikedApplication(user.uid, applicationUid);
 
-    // Publish the user entry to make changes visible
-    console.log('Attempting to publish user entry:', user.uid);
-    console.log('Environment:', process.env.NEXT_PUBLIC_CONTENTSTACK_ENVIRONMENT);
-    try {
-      const published = await publishEntry({
-        contentTypeUid: 'users',
-        entryUid: user.uid,
-        environments: [process.env.NEXT_PUBLIC_CONTENTSTACK_ENVIRONMENT!],
-        locales: ['en-us'],
-      });
-      console.log('✓ User entry published successfully:', published);
-    } catch (publishError) {
-      console.error('✗ Failed to publish user entry after like:');
-      console.error('Error details:', publishError);
-      console.error('Error message:', publishError instanceof Error ? publishError.message : 'Unknown');
-      // Non-critical - user update succeeded
-    }
+    // Publish the user entry so Delivery API reflects the change
+    await publishEntry({
+      contentTypeUid: 'users',
+      entryUid: user.uid,
+      environments: [process.env.NEXT_PUBLIC_CONTENTSTACK_ENVIRONMENT!],
+      locales: [user.locale || 'en-us'],
+    });
 
     return NextResponse.json({ success: true, alreadyLiked: false });
   } catch (error) {

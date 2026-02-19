@@ -70,20 +70,16 @@ export async function getApplicationByUid(uid: string) {
  */
 export async function incrementApplicationUpvotes(applicationUid: string) {
   try {
-    // Fetch current upvotes
+    // Fetch current entry from Management API (latest draft, not published)
     const app = await Stack.contentType('application').entry(applicationUid).fetch();
-    const currentUpvotes = app?.upvotes || 0;
+    const currentUpvotes = Number(app?.upvotes) || 0;
     const nextUpvotes = currentUpvotes + 1;
 
-    // Update with new upvotes
-    const updatedApp = await Stack.contentType('application')
-      .entry(applicationUid)
-      .update({
-        entry: {
-          upvotes: nextUpvotes,
-        },
-      });
+    // Set the field on the fetched object and call .update()
+    app.upvotes = nextUpvotes;
+    const updatedApp = await app.update();
 
+    console.log(`incrementApplicationUpvotes - ${applicationUid}: ${currentUpvotes} → ${nextUpvotes}`);
     return { updatedApp, upvotes: nextUpvotes };
   } catch (error) {
     console.error(`Error incrementing upvotes for ${applicationUid}:`, error);
@@ -96,22 +92,16 @@ export async function incrementApplicationUpvotes(applicationUid: string) {
  */
 export async function addUpvotedApplication(userUid: string, applicationUid: string) {
   try {
-    console.log('addUpvotedApplication - Fetching user:', userUid);
-    console.log('addUpvotedApplication - Management token present:', !!process.env.CONTENTSTACK_MANAGEMENT_TOKEN);
-    console.log('addUpvotedApplication - API key:', process.env.NEXT_PUBLIC_CONTENTSTACK_API_KEY);
-    
-    // Fetch user using Management API to get version info
+    // Fetch latest draft from Management API (NOT Delivery) to avoid stale data
     const user = await Stack.contentType('users').entry(userUid).fetch();
-    
+
     if (!user) {
       console.error('addUpvotedApplication - User not found:', userUid);
       return null;
     }
 
-    console.log('addUpvotedApplication - User fetched, version:', user._version);
-    let upvotedApps = user?.upvoted_applications || [];
-    console.log('addUpvotedApplication - Current upvoted apps:', upvotedApps.length);
-    console.log('addUpvotedApplication - Current apps structure:', JSON.stringify(upvotedApps.slice(0, 2), null, 2));
+    const upvotedApps: any[] = user.upvoted_applications || [];
+    console.log(`addUpvotedApplication - current count: ${upvotedApps.length}, version: ${user._version}`);
 
     // Add new application if not already upvoted
     if (!upvotedApps.some((app: any) => app.uid === applicationUid)) {
@@ -119,31 +109,19 @@ export async function addUpvotedApplication(userUid: string, applicationUid: str
         uid: applicationUid,
         _content_type_uid: 'application',
       });
-      console.log('addUpvotedApplication - Added new app to upvoted list');
     } else {
-      console.log('addUpvotedApplication - App already in upvoted list');
+      console.log('addUpvotedApplication - already in list, skipping');
+      return user;
     }
 
-    // Update user entry with version info
-    console.log('addUpvotedApplication - Updating user entry with', upvotedApps.length, 'apps');
-    console.log('addUpvotedApplication - Update payload:', JSON.stringify({
-      upvoted_applications: upvotedApps.slice(0, 2),
-    }, null, 2));
-    
-    const updatedUser = await Stack.contentType('users')
-      .entry(userUid)
-      .update({
-        entry: {
-          upvoted_applications: upvotedApps,
-          _version: user._version,
-        },
-      });
+    // Mutate the fetched object and call .update() — SDK handles versioning
+    user.upvoted_applications = upvotedApps;
+    const updatedUser = await user.update();
 
-    console.log('addUpvotedApplication - Successfully updated user, new version:', updatedUser._version);
+    console.log(`addUpvotedApplication - updated to ${upvotedApps.length} apps, version: ${updatedUser._version}`);
     return updatedUser;
   } catch (error) {
     console.error('addUpvotedApplication - Error:', {
-      error,
       userUid,
       applicationUid,
       message: error instanceof Error ? error.message : 'Unknown error',
@@ -157,22 +135,16 @@ export async function addUpvotedApplication(userUid: string, applicationUid: str
  */
 export async function addLikedApplication(userUid: string, applicationUid: string) {
   try {
-    console.log('addLikedApplication - Fetching user:', userUid);
-    console.log('addLikedApplication - Management token present:', !!process.env.CONTENTSTACK_MANAGEMENT_TOKEN);
-    console.log('addLikedApplication - API key:', process.env.NEXT_PUBLIC_CONTENTSTACK_API_KEY);
-    
-    // Fetch user using Management API to get version info
+    // Fetch latest draft from Management API (NOT Delivery) to avoid stale data
     const user = await Stack.contentType('users').entry(userUid).fetch();
-    
+
     if (!user) {
       console.error('addLikedApplication - User not found:', userUid);
       return null;
     }
 
-    console.log('addLikedApplication - User fetched, version:', user._version);
-    let likedApps = user.liked_applications || [];
-    console.log('addLikedApplication - Current liked apps:', likedApps.length);
-    console.log('addLikedApplication - Current apps structure:', JSON.stringify(likedApps.slice(0, 2), null, 2));
+    const likedApps: any[] = user.liked_applications || [];
+    console.log(`addLikedApplication - current count: ${likedApps.length}, version: ${user._version}`);
 
     // Add new application if not already liked
     if (!likedApps.some((app: any) => app.uid === applicationUid)) {
@@ -180,31 +152,19 @@ export async function addLikedApplication(userUid: string, applicationUid: strin
         uid: applicationUid,
         _content_type_uid: 'application',
       });
-      console.log('addLikedApplication - Added new app to liked list');
     } else {
-      console.log('addLikedApplication - App already in liked list');
+      console.log('addLikedApplication - already in list, skipping');
+      return user;
     }
 
-    // Update user entry with version info
-    console.log('addLikedApplication - Updating user entry with', likedApps.length, 'apps');
-    console.log('addLikedApplication - Update payload:', JSON.stringify({
-      liked_applications: likedApps.slice(0, 2),
-    }, null, 2));
-    
-    const updatedUser = await Stack.contentType('users')
-      .entry(userUid)
-      .update({
-        entry: {
-          liked_applications: likedApps,
-          _version: user._version,
-        },
-      });
+    // Mutate the fetched object and call .update() — SDK handles versioning
+    user.liked_applications = likedApps;
+    const updatedUser = await user.update();
 
-    console.log('addLikedApplication - Successfully updated user, new version:', updatedUser._version);
+    console.log(`addLikedApplication - updated to ${likedApps.length} apps, version: ${updatedUser._version}`);
     return updatedUser;
   } catch (error) {
     console.error('addLikedApplication - Error:', {
-      error,
       userUid,
       applicationUid,
       message: error instanceof Error ? error.message : 'Unknown error',

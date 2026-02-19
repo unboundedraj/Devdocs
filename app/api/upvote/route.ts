@@ -63,42 +63,27 @@ export async function POST(req: Request) {
       );
     }
 
-    // Step 4: Increment upvotes
+    // Step 4: Increment upvotes on the application
     const { upvotes: nextUpvotes } = await incrementApplicationUpvotes(applicationUid);
 
-    // Step 4b: Publish the entry
-    try {
-      await publishEntry({
-        contentTypeUid: 'application',
-        entryUid: applicationUid,
-        environments: [process.env.NEXT_PUBLIC_CONTENTSTACK_ENVIRONMENT!],
-        locales: [app?.locale || 'en-us'],
-      });
-    } catch (publishError) {
-      console.error('Failed to publish application after upvote:', publishError);
-      // We still return success - publishing is non-critical
-    }
+    // Step 5: Publish the application so upvote count is visible
+    await publishEntry({
+      contentTypeUid: 'application',
+      entryUid: applicationUid,
+      environments: [process.env.NEXT_PUBLIC_CONTENTSTACK_ENVIRONMENT!],
+      locales: [app?.locale || 'en-us'],
+    });
 
-    // Step 5: Update user's upvoted_applications
+    // Step 6: Update user's upvoted_applications
     await addUpvotedApplication(user.uid, applicationUid);
 
-    // Step 6: Publish the user entry to make changes visible
-    console.log('Attempting to publish user entry:', user.uid);
-    console.log('Environment:', process.env.NEXT_PUBLIC_CONTENTSTACK_ENVIRONMENT);
-    try {
-      const published = await publishEntry({
-        contentTypeUid: 'users',
-        entryUid: user.uid,
-        environments: [process.env.NEXT_PUBLIC_CONTENTSTACK_ENVIRONMENT!],
-        locales: ['en-us'],
-      });
-      console.log('✓ User entry published successfully:', published);
-    } catch (publishError) {
-      console.error('✗ Failed to publish user entry after upvote:');
-      console.error('Error details:', publishError);
-      console.error('Error message:', publishError instanceof Error ? publishError.message : 'Unknown');
-      // Non-critical - user update succeeded
-    }
+    // Step 7: Publish the user entry so Delivery API reflects the change
+    await publishEntry({
+      contentTypeUid: 'users',
+      entryUid: user.uid,
+      environments: [process.env.NEXT_PUBLIC_CONTENTSTACK_ENVIRONMENT!],
+      locales: [user.locale || 'en-us'],
+    });
 
     return NextResponse.json({
       success: true,
