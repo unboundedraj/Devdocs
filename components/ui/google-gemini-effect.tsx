@@ -14,22 +14,26 @@ export const GoogleGeminiEffect = ({
   description,
   className,
   ctaUrl,
+  titleProps,
+  descriptionProps,
 }: {
   pathLengths: MotionValue[];
   title?: string;
   description?: string;
   className?: string;
   ctaUrl?: string;
+  titleProps?: Record<string, string>;
+  descriptionProps?: Record<string, string>;
 }) => {
   return (
     <div className={cn("sticky pt-30 top-0 z-20", className)}>
       {title && (
-        <p className="text-lg md:text-7xl font-normal pb-4 text-center bg-clip-text text-transparent bg-gradient-to-b from-neutral-100 to-neutral-300">
+        <p className="text-lg md:text-7xl font-normal pb-4 text-center bg-clip-text text-transparent bg-gradient-to-b from-neutral-100 to-neutral-300" {...titleProps}>
           {title}
         </p>
       )}
       {description && (
-        <p className="text-xs md:text-xl font-normal text-center text-neutral-400 mt-50 max-w-lg mx-auto">
+        <p className="text-xs md:text-xl font-normal text-center text-neutral-400 mt-50 max-w-lg mx-auto" {...descriptionProps}>
           {description}
         </p>
       )}

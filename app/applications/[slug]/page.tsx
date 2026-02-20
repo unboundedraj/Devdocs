@@ -1,5 +1,5 @@
 import { getAllApplications } from '@/lib/queries';
-import { setLivePreviewQueryParams } from '@/lib/utils';
+import { setLivePreviewQueryParams, getEditTags } from '@/lib/utils';
 import Link from 'next/link';
 
 export default async function ApplicationDetailPage({
@@ -53,7 +53,7 @@ export default async function ApplicationDetailPage({
         <div className="max-w-5xl mx-auto">
           <div className="flex items-start justify-between mb-6">
             <div>
-              <h1 className="text-4xl font-bold text-gray-900 mb-2">
+              <h1 className="text-4xl font-bold text-gray-900 mb-2" {...getEditTags(application, 'title')}>
                 {application.title}
               </h1>
               <p className="text-gray-600">
@@ -63,7 +63,7 @@ export default async function ApplicationDetailPage({
             
             <div className="flex gap-2">
               {application.app_category && (
-                <span className="bg-indigo-100 text-indigo-700 px-4 py-2 rounded-lg text-sm font-medium">
+                <span className="bg-indigo-100 text-indigo-700 px-4 py-2 rounded-lg text-sm font-medium" {...getEditTags(application, 'app_category')}>
                   {application.app_category}
                 </span>
               )}
@@ -124,6 +124,7 @@ export default async function ApplicationDetailPage({
       <div 
         className="rich-text text-gray-700"
         dangerouslySetInnerHTML={{ __html: application.main_description }}
+        {...getEditTags(application, 'main_description')}
       />
     </div>
   </section>
@@ -141,10 +142,10 @@ export default async function ApplicationDetailPage({
                   key={index}
                   className="bg-gray-50 rounded-lg p-6 border border-gray-200"
                 >
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-3" {...getEditTags(application, `app_key_features.${index}.app_key_feature_title`)}>
                     {feature.app_key_feature_title}
                   </h3>
-                  <p className="text-gray-600 text-sm leading-relaxed">
+                  <p className="text-gray-600 text-sm leading-relaxed" {...getEditTags(application, `app_key_features.${index}.app_key_features_description`)}>
                     {feature.app_key_features_description}
                   </p>
                 </div>
@@ -162,6 +163,7 @@ export default async function ApplicationDetailPage({
       <div 
         className="rich-text text-gray-700"
         dangerouslySetInnerHTML={{ __html: application.getting_started }}
+        {...getEditTags(application, 'getting_started')}
       />
     </div>
   </section>
@@ -172,7 +174,7 @@ export default async function ApplicationDetailPage({
         <section className="py-12 px-6 bg-gray-50">
           <div className="max-w-5xl mx-auto">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Technical Overview</h2>
-            <p className="text-gray-700 leading-relaxed whitespace-pre-line">
+            <p className="text-gray-700 leading-relaxed whitespace-pre-line" {...getEditTags(application, 'app_description')}>
               {application.app_description}
             </p>
           </div>

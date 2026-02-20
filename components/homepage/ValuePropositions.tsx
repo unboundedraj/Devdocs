@@ -1,4 +1,5 @@
 import { BookOpen, Zap, Users } from 'lucide-react';
+import { getEditTags } from '@/lib/utils';
 
 interface ValueProposition {
   proposition_title: string;
@@ -7,11 +8,12 @@ interface ValueProposition {
 
 interface ValuePropositionsProps {
   propositions: ValueProposition[];
+  entry?: any;
 }
 
 const icons = [BookOpen, Zap, Users];
 
-export default function ValuePropositions({ propositions }: ValuePropositionsProps) {
+export default function ValuePropositions({ propositions, entry }: ValuePropositionsProps) {
   return (
     <section className="py-20 bg-black relative overflow-hidden">
       {/* Subtle background blur effect */}
@@ -52,11 +54,11 @@ export default function ValuePropositions({ propositions }: ValuePropositionsPro
                   })()}
                 </div>
                 
-                <h3 className="text-2xl font-bold mb-4 bg-gradient-to-r from-gray-200 to-white bg-clip-text text-transparent group-hover:from-white group-hover:to-gray-100 transition-all duration-300">
+                <h3 className="text-2xl font-bold mb-4 bg-gradient-to-r from-gray-200 to-white bg-clip-text text-transparent group-hover:from-white group-hover:to-gray-100 transition-all duration-300" {...getEditTags(entry, `value_propositions.${index}.proposition_title`)}>
                   {prop.proposition_title}
                 </h3>
                 
-                <p className="text-gray-400 leading-relaxed group-hover:text-gray-300 transition-colors duration-300">
+                <p className="text-gray-400 leading-relaxed group-hover:text-gray-300 transition-colors duration-300" {...getEditTags(entry, `value_propositions.${index}.proposition_description`)}>
                   {prop.proposition_description}
                 </p>
               </div>

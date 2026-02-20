@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { Application } from '@/types/application';
 import { signIn, useSession } from 'next-auth/react';
 import { GlowingEffect } from '@/components/ui/glowing-effect';
+import { getEditTags } from '@/lib/utils';
 
 interface ApplicationCardProps {
   application: Application;
@@ -140,7 +141,7 @@ export default function ApplicationCard({ application, isUpvoted: initialIsUpvot
           {/* Card Header with Category Badge */}
           <div className="flex items-center justify-between mb-2 relative z-10">
             {application.app_category && (
-              <span className="inline-block bg-gradient-to-r from-gray-800 to-gray-700 text-gray-300 px-3 py-1 rounded-lg text-xs font-semibold border border-gray-700">
+              <span className="inline-block bg-gradient-to-r from-gray-800 to-gray-700 text-gray-300 px-3 py-1 rounded-lg text-xs font-semibold border border-gray-700" {...getEditTags(application, 'app_category')}>
                 {application.app_category}
               </span>
             )}
@@ -154,12 +155,12 @@ export default function ApplicationCard({ application, isUpvoted: initialIsUpvot
           {/* Card Body */}
           <div className="flex-1 flex flex-col relative z-10">
             {/* Title */}
-            <h3 className="text-xl font-bold bg-gradient-to-r from-gray-200 to-white bg-clip-text text-transparent mb-3 group-hover:text-indigo-400 transition-all line-clamp-2">
+            <h3 className="text-xl font-bold bg-gradient-to-r from-gray-200 to-white bg-clip-text text-transparent mb-3 group-hover:text-indigo-400 transition-all line-clamp-2" {...getEditTags(application, 'title')}>
               {application.title}
             </h3>
 
             {/* Description */}
-            <p className="text-gray-400 text-sm leading-relaxed mb-4 flex-1 line-clamp-3 group-hover:text-gray-300 transition-colors">
+            <p className="text-gray-400 text-sm leading-relaxed mb-4 flex-1 line-clamp-3 group-hover:text-gray-300 transition-colors" {...getEditTags(application, 'app_description')}>
               {application.app_description || application.main_description?.replace(/<[^>]*>/g, '').substring(0, 150) || 'View comprehensive documentation and guides for ' + application.title}
             </p>
 

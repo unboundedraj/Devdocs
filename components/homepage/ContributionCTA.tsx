@@ -3,14 +3,16 @@
 import React from "react";
 import { useScroll, useTransform } from "motion/react";
 import { GoogleGeminiEffect } from "@/components/ui/google-gemini-effect";
+import { getEditTags } from '@/lib/utils';
 
 interface ContributionCTAProps {
   heading: string;
   description: string;
   url: string;
+  entry?: any;
 }
 
-export default function ContributionCTA({ heading, description, url }: ContributionCTAProps) {
+export default function ContributionCTA({ heading, description, url, entry }: ContributionCTAProps) {
   const ref = React.useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -37,6 +39,8 @@ export default function ContributionCTA({ heading, description, url }: Contribut
         title={heading}
         description={description}
         ctaUrl={url}
+        titleProps={getEditTags(entry, 'contribution_cta.cta_heading')}
+        descriptionProps={getEditTags(entry, 'contribution_cta.cta_description')}
       />
 
       {/* Content */}

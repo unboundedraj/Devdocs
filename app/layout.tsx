@@ -41,8 +41,6 @@ export default async function RootLayout({
     border_color: getHexColor(theme?.border_color, '#E5E7EB'),
   };
 
-  console.log('=== FINAL COLORS ===', colors);
-
   return (
     <html lang="en">
       <head>

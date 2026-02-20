@@ -1,5 +1,5 @@
 import { getSupportPage } from '@/lib/queries';
-import { setLivePreviewQueryParams } from '@/lib/utils';
+import { setLivePreviewQueryParams, getEditTags } from '@/lib/utils';
 import SupportChannels from '@/app/support/SupportChannels';
 import SupportHeader from '@/components/support/SupportHeader';
 import { HeroParallax } from '@/components/ui/hero-parallax';
@@ -117,7 +117,7 @@ export default async function SupportPage({
                 Choose your preferred platform to get instant support
               </p>
             </div>
-            <SupportChannels channels={supportPage.support_channels} />
+            <SupportChannels channels={supportPage.support_channels} entry={supportPage} />
           </div>
         </section>
       )}
@@ -136,6 +136,7 @@ export default async function SupportPage({
       </div>
       <div className="rich-text text-gray-700"
         dangerouslySetInnerHTML={{ __html: supportPage.contribution_guidelines }}
+        {...getEditTags(supportPage, 'contribution_guidelines')}
       />
     </div>
   </section>

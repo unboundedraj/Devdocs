@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { FAQ } from '@/types/faq'
 import { ChevronDown, Lightbulb } from 'lucide-react'
+import { getEditTags } from '@/lib/utils'
 
 interface FAQClientProps {
   faqs: FAQ[]
@@ -77,7 +78,7 @@ export default function FAQClient({ faqs, categories }: FAQClientProps) {
                   </div>
                   <span className={`font-medium transition-colors duration-200 ${
                     isOpen ? 'text-indigo-900' : 'text-gray-900 group-hover:text-indigo-700'
-                  }`}>
+                  }`} {...getEditTags(faq, 'question')}>
                     {faq.question}
                   </span>
                 </div>
@@ -94,6 +95,7 @@ export default function FAQClient({ faqs, categories }: FAQClientProps) {
                   <div
                     className="prose prose-sm prose-gray max-w-none text-gray-700"
                     dangerouslySetInnerHTML={{ __html: html }}
+                    {...getEditTags(faq, 'answer')}
                   />
                 </div>
               )}

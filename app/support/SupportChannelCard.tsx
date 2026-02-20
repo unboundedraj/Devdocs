@@ -1,12 +1,15 @@
 "use client";
 
 import { SupportChannel } from '@/types/supportpage';
+import { getEditTags } from '@/lib/utils';
 
 interface SupportChannelCardProps {
   channel: SupportChannel;
+  entry?: any;
+  index?: number;
 }
 
-export default function SupportChannelCard({ channel }: SupportChannelCardProps) {
+export default function SupportChannelCard({ channel, entry, index }: SupportChannelCardProps) {
   return (
     <a
       href="https://github.com/unboundedraj/Devdocs"
@@ -19,7 +22,7 @@ export default function SupportChannelCard({ channel }: SupportChannelCardProps)
       
       <div className="relative z-10">
         <div className="flex items-start justify-between mb-6">
-          <h3 className="text-2xl font-bold text-gray-900 group-hover:text-indigo-600 transition-colors">
+          <h3 className="text-2xl font-bold text-gray-900 group-hover:text-indigo-600 transition-colors" {...getEditTags(entry, `support_channels.${index}.platform_name`)}>
             {channel.platform_name}
           </h3>
           <svg 
@@ -37,7 +40,7 @@ export default function SupportChannelCard({ channel }: SupportChannelCardProps)
           </svg>
         </div>
         
-        <p className="text-gray-600 text-base leading-relaxed mb-6 group-hover:text-gray-700 transition-colors">
+        <p className="text-gray-600 text-base leading-relaxed mb-6 group-hover:text-gray-700 transition-colors" {...getEditTags(entry, `support_channels.${index}.platform_description`)}>
           {channel.platform_description}
         </p>
         

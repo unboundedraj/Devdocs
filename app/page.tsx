@@ -39,16 +39,18 @@ export default async function HomePage({
       />
 
       <ValuePropositions 
+        entry={homepage}
         propositions={homepage.value_propositions}
       />
 
       <ContributionCTA
+        entry={homepage}
         heading={homepage.contribution_cta?.cta_heading}
         description={homepage.contribution_cta?.cta_description}
         url={homepage.contribution_cta?.cta_url}
       />
 
-      <FeaturedApplications applications={homepage.featured_applications} />
+      <FeaturedApplications applications={homepage.featured_applications} entry={homepage} />
     </main>
   );
 }

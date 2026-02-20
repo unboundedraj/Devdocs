@@ -1,10 +1,12 @@
 import { Application } from '@/types/application';
+import { getEditTags } from '@/lib/utils';
 
 interface FeaturedApplicationsProps {
   applications: Application[];
+  entry?: any;
 }
 
-export default function FeaturedApplications({ applications }: FeaturedApplicationsProps) {
+export default function FeaturedApplications({ applications, entry }: FeaturedApplicationsProps) {
   // Show first 6 featured apps
   const featuredApps = applications.slice(0, 6);
 
@@ -85,19 +87,19 @@ export default function FeaturedApplications({ applications }: FeaturedApplicati
                 {/* Category Badge */}
                 {app.app_category && (
                   <div className="mb-4">
-                    <span className="inline-block bg-gradient-to-r from-gray-800 to-gray-700 text-gray-300 px-3 py-1 rounded-lg text-xs font-semibold border border-gray-700">
+                    <span className="inline-block bg-gradient-to-r from-gray-800 to-gray-700 text-gray-300 px-3 py-1 rounded-lg text-xs font-semibold border border-gray-700" {...getEditTags(app, 'app_category')}>
                       {app.app_category}
                     </span>
                   </div>
                 )}
 
                 {/* Title */}
-                <h3 className="text-2xl font-bold bg-gradient-to-r from-gray-200 to-white bg-clip-text text-transparent mb-3 group-hover:text-indigo-400 transition-all">
+                <h3 className="text-2xl font-bold bg-gradient-to-r from-gray-200 to-white bg-clip-text text-transparent mb-3 group-hover:text-indigo-400 transition-all" {...getEditTags(app, 'title')}>
                   {app.title}
                 </h3>
 
                 {/* Description */}
-                <p className="text-gray-400 text-sm leading-relaxed mb-4 flex-1 line-clamp-3 group-hover:text-gray-300 transition-colors">
+                <p className="text-gray-400 text-sm leading-relaxed mb-4 flex-1 line-clamp-3 group-hover:text-gray-300 transition-colors" {...getEditTags(app, 'app_description')}>
                   {app.app_description?.substring(0, 120) ||
                     app.main_description?.replace(/<[^>]*>/g, '').substring(0, 120) ||
                     `Comprehensive documentation and guides for ${app.title}`}

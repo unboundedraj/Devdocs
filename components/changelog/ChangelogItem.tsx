@@ -1,4 +1,5 @@
 import { Changelog } from '@/types/changelog';
+import { getEditTags } from '@/lib/utils';
 
 interface ChangelogItemProps {
   changelog: Changelog;
@@ -39,12 +40,12 @@ export default function ChangelogItem({ changelog }: ChangelogItemProps) {
       {/* Header */}
       <div className="flex items-start justify-between mb-4">
         <div>
-          <h3 className="text-2xl font-bold text-gray-900 mb-2">
+          <h3 className="text-2xl font-bold text-gray-900 mb-2" {...getEditTags(changelog, 'changelog_title')}>
             {changelog.changelog_title}
           </h3>
           <div className="flex items-center gap-3 text-sm text-gray-600">
             {changelog.changelog_version && (
-              <span className="font-semibold">
+              <span className="font-semibold" {...getEditTags(changelog, 'changelog_version')}>
                 v{changelog.changelog_version}
               </span>
             )}
@@ -77,7 +78,7 @@ export default function ChangelogItem({ changelog }: ChangelogItemProps) {
       {/* Summary */}
       {changelog.changelog_summary && (
         <div className="mb-4">
-          <p className="text-gray-700 leading-relaxed whitespace-pre-line">
+          <p className="text-gray-700 leading-relaxed whitespace-pre-line" {...getEditTags(changelog, 'changelog_summary')}>
             {changelog.changelog_summary}
           </p>
         </div>
@@ -92,6 +93,7 @@ export default function ChangelogItem({ changelog }: ChangelogItemProps) {
           <div
             className="rich-text text-gray-700"
             dangerouslySetInnerHTML={{ __html: changelog.detailed_changes }}
+            {...getEditTags(changelog, 'detailed_changes')}
           />
         </div>
       )}

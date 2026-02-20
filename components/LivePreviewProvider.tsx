@@ -1,9 +1,12 @@
 'use client';
 
 import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import ContentstackLivePreview from '@contentstack/live-preview-utils';
 
 export default function LivePreviewProvider() {
+  const router = useRouter();
+
   useEffect(() => {
     ContentstackLivePreview.init({
       enable: process.env.NEXT_PUBLIC_CONTENTSTACK_ENVIRONMENT !== 'production',
@@ -19,12 +22,17 @@ export default function LivePreviewProvider() {
       editButton: {
         enable: true,
         exclude: ['outsideLivePreviewPortal'],
-        includeByQueryParameter: true,
+        includeByQueryParameter: false,
         position: 'top-right',
       },
       debug: process.env.NEXT_PUBLIC_CONTENTSTACK_ENVIRONMENT !== 'production',
     });
-  }, []);
+
+    // Auto-refresh page when content changes in Contentstack Live Preview
+    ContentstackLivePreview.onEntryChange(() => {
+      router.refresh();
+    });
+  }, [router]);
 
   return null;
 }
