@@ -12,7 +12,7 @@ interface SupportChannelCardProps {
 export default function SupportChannelCard({ channel, entry, index }: SupportChannelCardProps) {
   return (
     <a
-      href="https://github.com/unboundedraj/Devdocs"
+      href={channel.url_for_support?.href || '#'}
       target="_blank"
       rel="noopener noreferrer"
       className="block bg-white rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 p-8 border border-gray-200 group hover:border-indigo-300 overflow-hidden relative"
@@ -22,8 +22,8 @@ export default function SupportChannelCard({ channel, entry, index }: SupportCha
       
       <div className="relative z-10">
         <div className="flex items-start justify-between mb-6">
-          <h3 className="text-2xl font-bold text-gray-900 group-hover:text-indigo-600 transition-colors" {...getEditTags(entry, `support_channels.${index}.platform_name`)}>
-            {channel.platform_name}
+          <h3 className="text-2xl font-bold text-gray-900 group-hover:text-indigo-600 transition-colors" {...getEditTags(entry, `support_channels.${index}.platfrom_name`)}>
+            {channel.platfrom_name}
           </h3>
           <svg 
             className="w-6 h-6 text-indigo-600 group-hover:translate-x-2 group-hover:-translate-y-1 transition-transform flex-shrink-0" 

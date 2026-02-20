@@ -1,7 +1,6 @@
 import { getSupportPage } from '@/lib/queries';
 import { setLivePreviewQueryParams, getEditTags } from '@/lib/utils';
 import SupportChannels from '@/app/support/SupportChannels';
-import SupportHeader from '@/components/support/SupportHeader';
 import { HeroParallax } from '@/components/ui/hero-parallax';
 
 const supportResources = [
@@ -103,7 +102,7 @@ export default async function SupportPage({
   return (
     <main className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
 
-      <HeroParallax products={supportResources} />
+      <HeroParallax products={supportResources} title={supportPage.title} description={supportPage.multi_line} />
 
       {/* Support Channels */}
       {supportPage.support_channels && supportPage.support_channels.length > 0 && (

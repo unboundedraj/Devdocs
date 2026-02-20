@@ -1,13 +1,16 @@
 export interface SupportChannel {
-  platform_name: string;
+  platfrom_name: string;
   platform_description: string;
-  uri_for_support: string;
+  url_for_support: {
+    title: string;
+    href: string;
+  };
 }
 
 export interface Supportpage {
   uid: string;
   title: string;
-  multi_line_textbox?: string;
+  multi_line?: string;
   support_channels?: SupportChannel[];
   contribution_guidelines?: string;
   created_at?: string;
