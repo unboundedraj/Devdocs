@@ -20,7 +20,7 @@ export default function LivePreviewProvider() {
         host: 'app.contentstack.com', // AWS NA region
       },
       editButton: {
-        enable: true,
+        enable: false,
         exclude: ['outsideLivePreviewPortal'],
         includeByQueryParameter: false,
         position: 'top-right',

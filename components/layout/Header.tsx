@@ -4,6 +4,78 @@ import Link from 'next/link';
 import { useSession, signIn, signOut } from 'next-auth/react';
 import { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
+import { liteClient as algoliasearch } from 'algoliasearch/lite';
+import { InstantSearchNext } from 'react-instantsearch-nextjs';
+import { SearchBox, Hits, Highlight, useSearchBox } from 'react-instantsearch';
+
+type AlgoliaHit = {
+  objectID: string;
+  __position: number;
+  __queryID?: string;
+  title?: string;
+  content?: string;
+  type?: string;
+  slug?: string;
+  url?: string;
+};
+
+const algoliaAppId = process.env.NEXT_PUBLIC_ALGOLIA_APP_ID;
+const algoliaSearchApiKey = process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY;
+const algoliaIndexName = process.env.NEXT_PUBLIC_ALGOLIA_INDEX_NAME;
+
+const hasAlgoliaConfig = Boolean(algoliaAppId && algoliaSearchApiKey && algoliaIndexName);
+
+const searchClient = hasAlgoliaConfig
+  ? algoliasearch(algoliaAppId as string, algoliaSearchApiKey as string)
+  : null;
+
+function SearchResults() {
+  const { query } = useSearchBox();
+
+  if (!query.trim()) {
+    return null;
+  }
+
+  return (
+    <div className="absolute left-0 right-0 mt-2 max-h-96 overflow-y-auto rounded-lg border border-gray-800 bg-black/95 shadow-2xl backdrop-blur-md z-50">
+      <Hits hitComponent={SearchHit} />
+    </div>
+  );
+}
+
+function SearchHit({ hit }: { hit: AlgoliaHit }) {
+  const [contentType, entryId] = hit.objectID.split('.');
+
+  let href: string | null = null;
+
+  if (contentType === 'application' && entryId) {
+    href = `/applications/${entryId}`;
+  } else if (contentType === 'faq') {
+    href = '/faqs';
+  } else {
+    href = hit.url || (hit.slug ? `/applications/${hit.slug}` : null);
+  }
+
+  const content = (
+    <div className="px-4 py-3 border-b border-gray-900 hover:bg-gray-900/80 transition-colors duration-200">
+      <h3 className="text-sm font-semibold text-white line-clamp-1">
+        <Highlight attribute="title" hit={hit} />
+      </h3>
+      {hit.content ? <p className="text-xs text-gray-400 mt-1 line-clamp-2">{hit.content}</p> : null}
+      {hit.type ? (
+        <span className="inline-block mt-2 rounded-md border border-gray-700 bg-gray-800 px-2 py-0.5 text-[10px] uppercase tracking-wide text-gray-300">
+          {hit.type}
+        </span>
+      ) : null}
+    </div>
+  );
+
+  if (!href) {
+    return content;
+  }
+
+  return <Link href={href}>{content}</Link>;
+}
 
 export default function Header() {
   const { data: session, status } = useSession();
@@ -62,6 +134,34 @@ export default function Header() {
               <span className="relative z-10">AI Chat</span>
               <div className="absolute inset-0 bg-gradient-to-r from-gray-800 to-gray-700 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
             </Link>
+          </div>
+
+          {/* Global Search */}
+          <div className="hidden lg:block flex-1 max-w-md px-4">
+            {hasAlgoliaConfig && searchClient ? (
+              <InstantSearchNext
+                searchClient={searchClient}
+                indexName={algoliaIndexName as string}
+                routing={true}
+              >
+                <div className="relative">
+                  <SearchBox
+                    placeholder="Search docs..."
+                    classNames={{
+                      root: 'w-full',
+                      form: 'relative',
+                      input:
+                        'w-full rounded-lg border border-gray-800 bg-gray-950/80 px-4 py-2.5 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-600',
+                      submit:
+                        'absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300',
+                      reset:
+                        'absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300',
+                    }}
+                  />
+                  <SearchResults />
+                </div>
+              </InstantSearchNext>
+            ) : null}
           </div>
 
           {/* Auth & CTA Section */}
