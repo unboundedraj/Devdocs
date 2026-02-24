@@ -37,7 +37,7 @@ function SearchResults() {
   }
 
   return (
-    <div className="absolute left-0 right-0 mt-2 max-h-96 overflow-y-auto rounded-lg border border-gray-800 bg-black/95 shadow-2xl backdrop-blur-md z-50">
+    <div className="absolute left-0 right-0 mt-2 max-h-96 overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-2xl z-50">
       <Hits hitComponent={SearchHit} />
     </div>
   );
@@ -57,13 +57,13 @@ function SearchHit({ hit }: { hit: AlgoliaHit }) {
   }
 
   const content = (
-    <div className="px-4 py-3 border-b border-gray-900 hover:bg-gray-900/80 transition-colors duration-200">
-      <h3 className="text-sm font-semibold text-white line-clamp-1">
+    <div className="px-4 py-3 border-b border-gray-100 hover:bg-gray-50 transition-colors duration-200">
+      <h3 className="text-sm font-semibold text-gray-900 line-clamp-1">
         <Highlight attribute="title" hit={hit} />
       </h3>
-      {hit.content ? <p className="text-xs text-gray-400 mt-1 line-clamp-2">{hit.content}</p> : null}
+      {hit.content ? <p className="text-xs text-gray-600 mt-1 line-clamp-2">{hit.content}</p> : null}
       {hit.type ? (
-        <span className="inline-block mt-2 rounded-md border border-gray-700 bg-gray-800 px-2 py-0.5 text-[10px] uppercase tracking-wide text-gray-300">
+        <span className="inline-block mt-2 rounded-md border border-gray-200 bg-gray-100 px-2 py-0.5 text-[10px] uppercase tracking-wide text-gray-700">
           {hit.type}
         </span>
       ) : null}
@@ -151,11 +151,11 @@ export default function Header() {
                       root: 'w-full',
                       form: 'relative',
                       input:
-                        'w-full rounded-lg border border-gray-800 bg-gray-950/80 px-4 py-2.5 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-600',
+                        'w-full rounded-lg border border-gray-300 bg-white pl-4 pr-16 py-2.5 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-400',
                       submit:
-                        'absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300',
+                        'absolute right-9 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700',
                       reset:
-                        'absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300',
+                        'absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700',
                     }}
                   />
                   <SearchResults />
